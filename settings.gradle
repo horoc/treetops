@@ -1,0 +1,6 @@
+rootProject.name = 'treetops'
+include 'treetops-core'
+findProject(':treetops-core')?.name = 'core'
+include 'treetops-benchmark'
+findProject(':treetops-benchmark')?.name = 'benchmark'
+
