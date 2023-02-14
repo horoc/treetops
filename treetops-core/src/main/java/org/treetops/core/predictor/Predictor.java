@@ -1,5 +1,9 @@
 package org.treetops.core.predictor;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public interface Predictor {
 
     /**

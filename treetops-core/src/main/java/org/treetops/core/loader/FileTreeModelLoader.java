@@ -3,6 +3,10 @@ package org.treetops.core.loader;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class FileTreeModelLoader extends TreeModelLoader {
 
     private static class SingletonHolder {

@@ -5,6 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.treetops.core.model.TreeModel;
 import org.treetops.core.predictor.Predictor;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class BinaryObjectivePredictorDecorator implements OutputConvertor, Predictor {
 
     private Predictor predictor;

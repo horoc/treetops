@@ -4,6 +4,10 @@ import org.treetops.core.model.MissingType;
 import org.treetops.core.model.TreeModel;
 import org.treetops.core.model.TreeNode;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class SimplePredictor extends MetaDataHolder implements Predictor {
 
     private final TreeModel treeModel;

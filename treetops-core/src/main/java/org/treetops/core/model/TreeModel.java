@@ -3,6 +3,10 @@ package org.treetops.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class TreeModel {
     private int numClass;
     private int numberTreePerIteration;

@@ -16,6 +16,10 @@ import org.treetops.core.predictor.MetaDataHolder;
 import org.treetops.core.predictor.Predictor;
 import org.treetops.core.predictor.SimplePredictor;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class TreePredictorFactory {
 
     private static final Map<String, WeakReference<Predictor>> predictors = new HashMap<>();

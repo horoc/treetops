@@ -10,6 +10,10 @@ import java.util.List;
 import org.treetops.core.model.TreeModel;
 import org.treetops.core.parser.TreeModelParser;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public abstract class TreeModelLoader {
 
     protected abstract InputStream loadStream(String resource) throws Exception;

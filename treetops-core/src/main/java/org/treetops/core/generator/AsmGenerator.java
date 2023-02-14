@@ -1,6 +1,5 @@
 package org.treetops.core.generator;
 
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -18,6 +17,10 @@ import org.treetops.core.model.MissingType;
 import org.treetops.core.model.TreeModel;
 import org.treetops.core.model.TreeNode;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class AsmGenerator extends ClassLoader implements Generator, Opcodes {
 
     private static final int featureParameterIndex = 1;

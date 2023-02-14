@@ -5,6 +5,10 @@ import org.treetops.core.model.TreeNode;
 
 import java.util.Objects;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class MetaDataHolder {
 
     protected long[][] catBitSet;

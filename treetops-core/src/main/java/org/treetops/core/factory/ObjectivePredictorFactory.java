@@ -8,6 +8,10 @@ import org.treetops.core.predictor.Predictor;
 import org.treetops.core.predictor.decorator.BinaryObjectivePredictorDecorator;
 import org.treetops.core.predictor.decorator.OutputConvertor;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class ObjectivePredictorFactory {
 
     private static final Map<String, Class<? extends OutputConvertor>> registerConvertors = new HashMap<>();

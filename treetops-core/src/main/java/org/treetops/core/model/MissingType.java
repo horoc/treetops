@@ -1,5 +1,9 @@
 package org.treetops.core.model;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public enum MissingType {
     None(0),
     Zero(1),

@@ -10,6 +10,10 @@ import org.treetops.core.model.RawTreeBlock;
 import org.treetops.core.model.TreeModel;
 import org.treetops.core.model.TreeNode;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class TreeModelParser {
 
     private static final int categoricalMask = 1;

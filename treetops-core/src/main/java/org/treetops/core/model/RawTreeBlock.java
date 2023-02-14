@@ -2,6 +2,10 @@ package org.treetops.core.model;
 
 import java.util.List;
 
+/**
+ * @author chenzhou@apache.org
+ * @date 2023/2/14
+ */
 public class RawTreeBlock {
     /**
      * match with model file field:
