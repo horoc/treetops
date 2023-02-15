@@ -1,6 +1,6 @@
 rootProject.name = 'treetops'
 include 'treetops-core'
-findProject(':treetops-core')?.name = 'core'
+findProject(':treetops-core')?.name = 'treetops-core'
 include 'treetops-benchmark'
-findProject(':treetops-benchmark')?.name = 'benchmark'
+findProject(':treetops-benchmark')?.name = 'treetops-benchmark'
 
