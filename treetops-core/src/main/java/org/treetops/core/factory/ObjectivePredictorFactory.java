@@ -5,8 +5,9 @@ import java.util.Map;
 
 import org.treetops.core.model.TreeModel;
 import org.treetops.core.predictor.Predictor;
-import org.treetops.core.predictor.decorator.BinaryObjectivePredictorDecorator;
+import org.treetops.core.predictor.decorator.BinaryObjectiveDecorator;
 import org.treetops.core.predictor.decorator.OutputConvertor;
+import org.treetops.core.predictor.decorator.RegressionObjectiveDecorator;
 
 /**
  * Predictor objective function decorate factory
@@ -23,7 +24,9 @@ public class ObjectivePredictorFactory {
      * Any new objective convertor should register into the container first
      */
     static {
-        CONVERTORS.put("binary", BinaryObjectivePredictorDecorator.class);
+        CONVERTORS.put("binary", BinaryObjectiveDecorator.class);
+        CONVERTORS.put("regression", RegressionObjectiveDecorator.class);
+        CONVERTORS.put("regression_l1", RegressionObjectiveDecorator.class);
     }
 
     /**

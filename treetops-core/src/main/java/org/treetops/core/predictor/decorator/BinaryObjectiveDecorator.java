@@ -11,7 +11,7 @@ import org.treetops.core.predictor.Predictor;
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */
-public class BinaryObjectivePredictorDecorator implements OutputConvertor, Predictor {
+public class BinaryObjectiveDecorator implements OutputConvertor, Predictor {
 
     private Predictor predictor;
     private double sigmoid;
