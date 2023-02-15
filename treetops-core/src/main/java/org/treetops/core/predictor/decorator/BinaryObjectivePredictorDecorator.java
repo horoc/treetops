@@ -6,6 +6,8 @@ import org.treetops.core.model.TreeModel;
 import org.treetops.core.predictor.Predictor;
 
 /**
+ * Binary objective function convertor
+ *
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */

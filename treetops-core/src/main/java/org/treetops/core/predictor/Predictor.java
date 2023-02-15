@@ -9,7 +9,7 @@ public interface Predictor {
     /**
      * All implementation of Predictor should be subclass of this package
      */
-    String predictorClassPrefix = "org.treetops.core.predictor";
+    String PREDICTOR_CLASS_PREFIX = "org.treetops.core.predictor";
 
     /**
      * Refer to official library api: microsoft/LightGBM/src/boosting/gbdt.h#GBDT::PredictRaw

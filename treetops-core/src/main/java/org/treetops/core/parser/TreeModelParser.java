@@ -11,47 +11,75 @@ import org.treetops.core.model.TreeModel;
 import org.treetops.core.model.TreeNode;
 
 /**
+ * Parse String model info into TreeModel instance
+ *
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */
 public class TreeModelParser {
 
-    private static final int categoricalMask = 1;
-    private static final int defaultLeftMask = 2;
+    /**
+     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#kCategoricalMask
+     */
+    private static final int CATEGORICAL_MASK = 1;
 
-    public static TreeModel parseTreeModel(List<String> metaInfos) {
+    /**
+     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#kDefaultLeftMask
+     */
+    private static final int DEFAULT_LEFT_MASK = 2;
+
+    /**
+     * Parse workflow: <br/>
+     * 1. iterator each line to find meta block header or tree block header <br/>
+     * 2. parse different block into tree model instance <br/>
+     *
+     * @param rawLines raw data
+     * @return tree model instance
+     */
+    public static TreeModel parseTreeModel(List<String> rawLines) {
         TreeModel treeModel = new TreeModel();
         int curLineIndex = 0;
-        while (curLineIndex < metaInfos.size()) {
-            String line = metaInfos.get(curLineIndex);
-            if (StringUtils.isNoneBlank(line)) {
-                // we only need tree info and meta block info
-                if (isTreeBlock(line)) {
-                    TreeNode tree = new TreeNode();
-                    curLineIndex = initTreeBlock(tree, metaInfos, curLineIndex);
-                    treeModel.getTrees().add(tree);
-                    // mark model contains category node, need to initialize threshold data later
-                    if (Objects.nonNull(tree.getCatThreshold()) && !tree.getCatThreshold().isEmpty()) {
-                        treeModel.setContainsCatNode(true);
-                    }
-                } else if (isMetaInfoBlock(line)) {
-                    // skip first line of meta info block
-                    curLineIndex = initMetaBlock(treeModel, metaInfos, curLineIndex + 1);
+        while (curLineIndex < rawLines.size()) {
+            String line = rawLines.get(curLineIndex);
+            if (StringUtils.isBlank(line)) {
+                curLineIndex++;
+                continue;
+            }
+            // we only need tree info and meta block info
+            if (isTreeBlockHeader(line)) {
+                TreeNode tree = new TreeNode();
+                curLineIndex = initTreeBlock(tree, rawLines, curLineIndex);
+                treeModel.getTrees().add(tree);
+                // mark model contains category node, need to initialize threshold data later
+                if (Objects.nonNull(tree.getCatThreshold()) && !tree.getCatThreshold().isEmpty()) {
+                    treeModel.setContainsCatNode(true);
                 }
+            } else if (isMetaInfoBlockHeader(line)) {
+                // skip first line of meta info block
+                curLineIndex = initMetaBlock(treeModel, rawLines, curLineIndex + 1);
             }
             curLineIndex++;
         }
         return treeModel;
     }
 
-    private static boolean isTreeBlock(String line) {
-        return StringUtils.isNoneBlank(line) && line.startsWith("Tree=");
+    /**
+     * load meta block info into model
+     */
+    private static int initMetaBlock(TreeModel treeModel, List<String> rawStingLines, int offset) {
+        Map<String, String> rawDataMap = new HashMap<>();
+        offset = parseRawKeyValueMap(rawStingLines, rawDataMap, offset);
+        convertAndSetField("objective", rawDataMap, TreeModelParser::parseObjectiveType, treeModel::setObjectiveType);
+        convertAndSetField("objective", rawDataMap, TreeModelParser::parseObjectiveConfig, treeModel::setObjectiveConfig);
+        convertAndSetField("num_class", rawDataMap, Integer::valueOf, treeModel::setNumClass);
+        convertAndSetField("max_feature_idx", rawDataMap, Integer::valueOf, treeModel::setMaxFeatureIndex);
+        convertAndSetField("num_tree_per_iteration", rawDataMap, Integer::valueOf, treeModel::setNumberTreePerIteration);
+        return offset;
     }
 
-    private static boolean isMetaInfoBlock(String line) {
-        return StringUtils.isNoneBlank(line) && line.equals("tree");
-    }
-
+    /**
+     * load tree block info into model
+     */
     private static int initTreeBlock(TreeNode root, List<String> rawStingLines, int offset) {
         Map<String, String> rawDataMap = new HashMap<>();
         offset = parseRawKeyValueMap(rawStingLines, rawDataMap, offset);
@@ -98,6 +126,27 @@ public class TreeModelParser {
         return offset;
     }
 
+    /**
+     * load tree node block info into model
+     */
+    private static void initTreeSingleNode(TreeNode node, RawTreeBlock block) {
+        int nodeIndex = node.getNodeIndex();
+        node.setLeaf(false);
+        node.setTreeIndex(block.getTree());
+        node.setDecisionType(block.getDecisionType().get(nodeIndex));
+        node.setCategoryNode(isCategoryNode(block.getDecisionType().get(nodeIndex)));
+        node.setDefaultLeftDecision(isDefaultLeftDecisionNode(block.getDecisionType().get(nodeIndex)));
+        node.setSplitFeatures(block.getSplitFeature());
+        node.setCatThreshold(block.getCatThreshold());
+        if (node.isCategoryNode()) {
+            node.setCatBoundaryBegin(block.getThreshold().get(nodeIndex).intValue());
+            node.setCatBoundaryEnd(node.getCatBoundaryBegin() + 1);
+        } else {
+            node.setThreshold(block.getThreshold().get(nodeIndex));
+        }
+    }
+
+
     private static void linkTreeNode(TreeNode node, List<TreeNode> treeNodes, RawTreeBlock block) {
         int leftIndex = block.getLeftChild().get(node.getNodeIndex());
         if (leftIndex < 0) {
@@ -124,42 +173,6 @@ public class TreeModelParser {
         node.setAllNodes(treeNodes);
     }
 
-    private static void initTreeSingleNode(TreeNode node, RawTreeBlock block) {
-        int nodeIndex = node.getNodeIndex();
-        node.setLeaf(false);
-        node.setTreeIndex(block.getTree());
-        node.setDecisionType(block.getDecisionType().get(nodeIndex));
-        node.setCategoryNode(isCategoryNode(block.getDecisionType().get(nodeIndex)));
-        node.setDefaultLeftDecision(isDefaultLeftDecisionNode(block.getDecisionType().get(nodeIndex)));
-        node.setSplitFeatures(block.getSplitFeature());
-        node.setCatThreshold(block.getCatThreshold());
-        if (node.isCategoryNode()) {
-            node.setCatBoundaryBegin(block.getThreshold().get(nodeIndex).intValue());
-            node.setCatBoundaryEnd(node.getCatBoundaryBegin() + 1);
-        } else {
-            node.setThreshold(block.getThreshold().get(nodeIndex));
-        }
-    }
-
-    private static boolean isCategoryNode(int decisionType) {
-        return (decisionType & categoricalMask) > 0;
-    }
-
-    private static boolean isDefaultLeftDecisionNode(int decisionType) {
-        return (decisionType & defaultLeftMask) > 0;
-    }
-
-    private static int initMetaBlock(TreeModel forest, List<String> rawStingLines, int offset) {
-        Map<String, String> rawDataMap = new HashMap<>();
-        offset = parseRawKeyValueMap(rawStingLines, rawDataMap, offset);
-        convertAndSetField("objective", rawDataMap, TreeModelParser::parseObjectiveType, forest::setObjectiveType);
-        convertAndSetField("objective", rawDataMap, TreeModelParser::parseObjectiveConfig, forest::setObjectiveConfig);
-        convertAndSetField("num_class", rawDataMap, Integer::valueOf, forest::setNumClass);
-        convertAndSetField("max_feature_idx", rawDataMap, Integer::valueOf, forest::setMaxFeatureIndex);
-        convertAndSetField("num_tree_per_iteration", rawDataMap, Integer::valueOf, forest::setNumberTreePerIteration);
-        return offset;
-    }
-
     private static int parseRawKeyValueMap(List<String> metaInfos, Map<String, String> rawDataMap, int offset) {
         for (; offset < metaInfos.size(); offset++) {
             String line = metaInfos.get(offset);
@@ -168,30 +181,29 @@ public class TreeModelParser {
             }
             String[] sp = line.split("=");
             if (sp.length != 2) {
-                // TODO opt exception
-                throw new RuntimeException("try to parse tree model, invalid content");
+                throw new RuntimeException("try to parse tree model failed, invalid content");
             }
             rawDataMap.put(sp[0], sp[1]);
         }
         return offset;
     }
 
-    private static void convertAndSetField(String key, Map<String, String> rawDataMap,
-                                           Consumer<String> setter) {
-        String rawValue = rawDataMap.get(key);
-        if (StringUtils.isNoneBlank(rawValue)) {
-            setter.accept(rawValue);
-        }
+    private static boolean isCategoryNode(int decisionType) {
+        return (decisionType & CATEGORICAL_MASK) > 0;
     }
 
-    private static <T> List<T> fromStringToList(String str, Function<String, T> converter) {
-        String[] splits = str.split(" ");
-        List<T> ret = new ArrayList<>(splits.length);
-        for (String val : splits) {
-            ret.add(converter.apply(val));
-        }
-        return ret;
+    private static boolean isDefaultLeftDecisionNode(int decisionType) {
+        return (decisionType & DEFAULT_LEFT_MASK) > 0;
     }
+
+    private static boolean isTreeBlockHeader(String line) {
+        return StringUtils.isNoneBlank(line) && line.startsWith("Tree=");
+    }
+
+    private static boolean isMetaInfoBlockHeader(String line) {
+        return StringUtils.isNoneBlank(line) && "tree".equals(line);
+    }
+
 
     private static String parseObjectiveType(String objective) {
         if (StringUtils.isNotBlank(objective)) {
@@ -210,6 +222,15 @@ public class TreeModelParser {
         return StringUtils.EMPTY;
     }
 
+    private static <T> List<T> fromStringToList(String str, Function<String, T> converter) {
+        String[] splits = str.split(" ");
+        List<T> ret = new ArrayList<>(splits.length);
+        for (String val : splits) {
+            ret.add(converter.apply(val));
+        }
+        return ret;
+    }
+
     private static <T> void convertAndSetField(String key, Map<String, String> rawDataMap,
                                                Function<String, T> converter, Consumer<T> setter) {
         String rawValue = rawDataMap.get(key);
@@ -217,5 +238,4 @@ public class TreeModelParser {
             setter.accept(converter.apply(rawValue));
         }
     }
-
 }

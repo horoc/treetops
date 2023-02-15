@@ -6,11 +6,16 @@ import org.treetops.core.model.TreeNode;
 import java.util.Objects;
 
 /**
+ * Meta data holder for Predictor
+ *
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */
 public class MetaDataHolder {
 
+    /**
+     * category bit threshold used in process of category node decision
+     */
     protected long[][] catBitSet;
 
     public void initialize(TreeModel model) {

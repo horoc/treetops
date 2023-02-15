@@ -21,45 +21,45 @@ import org.treetops.core.model.TreeNode;
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */
-public class AsmGenerator extends ClassLoader implements Generator, Opcodes {
+public class PredictorClassGenerator extends ClassLoader implements Generator, Opcodes {
 
-    private static final int featureParameterIndex = 1;
+    private static final int FEATURE_PARAMETER_INDEX = 1;
 
-    private AsmGenerator() {
+    private PredictorClassGenerator() {
     }
 
-    public static AsmGenerator getInstance() {
+    public static PredictorClassGenerator getInstance() {
         /*
             It's not singleton here, will create a new class loader everytime
             aim to help gc unload unused model
          */
-        return new AsmGenerator();
+        return new PredictorClassGenerator();
     }
 
     @Override
-    public Class<?> defineClassFromCode(String name, byte[] code) {
-        return this.defineClass(name, code, 0, code.length);
+    public Class<?> defineClassFromCode(String className, byte[] code) {
+        return this.defineClass(className, code, 0, code.length);
     }
 
     @Override
-    public byte[] generateCode(String name, TreeModel model) {
+    public byte[] generateCode(String className, TreeModel model) {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         ClassVisitor cv = new CheckClassAdapter(cw);
-        String className = toInternalName(name);
+        String internalClassName = toInternalName(className);
 
         // define class
-        cv.visit(V1_8, ACC_PUBLIC | ACC_SUPER, toInternalName(name), null, getSuperName(model),
+        cv.visit(V1_8, ACC_PUBLIC | ACC_SUPER, toInternalName(internalClassName), null, getSuperName(model),
             new String[] {"org/treetops/core/predictor/Predictor"});
 
         // define method
-        addInitMethod(cv, className, model);
+        addInitMethod(cv, internalClassName, model);
 
         // tree decision method
         // description : private double tree_[%tree_index](double[] features);
-        model.getTrees().forEach(t -> addTreeMethod(cv, className, t));
+        model.getTrees().forEach(t -> addTreeMethod(cv, internalClassName, t));
 
         // prediction method
-        addPredictionMethod(cv, className, model);
+        addPredictionMethod(cv, internalClassName, model);
 
         cv.visitEnd();
         return cw.toByteArray();
@@ -111,7 +111,7 @@ public class AsmGenerator extends ClassLoader implements Generator, Opcodes {
             MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PRIVATE, "tree_" + root.getTreeIndex(), "([D)D", null, null);
             methodVisitor.visitCode();
 
-            Map<Integer, Label> labels = new HashMap<>();
+            Map<Integer, Label> labels = new HashMap<>(root.getAllNodes().size());
             for (TreeNode node : root.getAllNodes()) {
                 labels.put(node.getNodeIndex(), new Label());
             }
@@ -258,7 +258,7 @@ public class AsmGenerator extends ClassLoader implements Generator, Opcodes {
 
     private void loadFeatureByIndex(MethodVisitor methodVisitor, int index) {
         // load features[index] to stack
-        methodVisitor.visitVarInsn(ALOAD, featureParameterIndex);
+        methodVisitor.visitVarInsn(ALOAD, FEATURE_PARAMETER_INDEX);
         methodVisitor.visitLdcInsn(index);
         methodVisitor.visitInsn(DALOAD);
     }
@@ -274,36 +274,5 @@ public class AsmGenerator extends ClassLoader implements Generator, Opcodes {
         } else {
             return "java/lang/Object";
         }
-    }
-
-
-    // todo method too large
-    private void initCatBitSet(MethodVisitor methodVisitor, String className, TreeModel treeModel) {
-        methodVisitor.visitIntInsn(SIPUSH, treeModel.getTrees().size());
-        methodVisitor.visitTypeInsn(ANEWARRAY, "[J");
-        methodVisitor.visitInsn(DUP);
-        for (int i = 0; i < treeModel.getTrees().size(); i++) {
-            TreeNode node = treeModel.getTrees().get(i);
-            int catThresholdSize = Optional.ofNullable(node.getCatThreshold()).map(List::size).orElse(0);
-            methodVisitor.visitIntInsn(SIPUSH, i);
-            methodVisitor.visitIntInsn(SIPUSH, catThresholdSize);
-            methodVisitor.visitIntInsn(NEWARRAY, T_LONG);
-            methodVisitor.visitInsn(DUP);
-
-            for (int j = 0; j < catThresholdSize; j++) {
-                methodVisitor.visitIntInsn(SIPUSH, j);
-                methodVisitor.visitLdcInsn(new Long(node.getCatThreshold().get(j)));
-                methodVisitor.visitInsn(LASTORE);
-                if (j == node.getCatThreshold().size() - 1) {
-                    methodVisitor.visitInsn(AASTORE);
-                } else {
-                    methodVisitor.visitInsn(DUP);
-                }
-            }
-            if (i != treeModel.getTrees().size() - 1) {
-                methodVisitor.visitInsn(DUP);
-            }
-        }
-        methodVisitor.visitFieldInsn(PUTSTATIC, className, "catBitSet", "[[J");
     }
 }

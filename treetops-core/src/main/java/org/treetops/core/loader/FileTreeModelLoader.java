@@ -4,10 +4,13 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 /**
+ * File model loader
+ * <p></p>
+ *
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */
-public class FileTreeModelLoader extends TreeModelLoader {
+public class FileTreeModelLoader extends AbstractLoader {
 
     private static class SingletonHolder {
         private static FileTreeModelLoader instance = new FileTreeModelLoader();

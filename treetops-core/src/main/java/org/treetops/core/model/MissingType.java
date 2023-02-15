@@ -5,8 +5,17 @@ package org.treetops.core.model;
  * @date 2023/2/14
  */
 public enum MissingType {
+    /**
+     * decision type mask for default None value
+     */
     None(0),
+    /**
+     * decision type mask for default Zero value
+     */
     Zero(1),
+    /**
+     * decision type mask for default Nan value
+     */
     Nan(2);
 
     private final int mask;

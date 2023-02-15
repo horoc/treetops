@@ -8,62 +8,123 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.treetops.core.generator.AsmGenerator;
+import org.treetops.core.generator.PredictorClassGenerator;
+import org.treetops.core.loader.AbstractLoader;
 import org.treetops.core.loader.FileTreeModelLoader;
-import org.treetops.core.loader.TreeModelLoader;
 import org.treetops.core.model.TreeModel;
 import org.treetops.core.predictor.MetaDataHolder;
 import org.treetops.core.predictor.Predictor;
 import org.treetops.core.predictor.SimplePredictor;
 
 /**
+ * Core factory of tree predictor, user should only get predictor instance through this factory
+ *
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */
 public class TreePredictorFactory {
 
-    private static final Map<String, WeakReference<Predictor>> predictors = new HashMap<>();
+    /**
+     * Predictor instance cache pool
+     */
+    private static final Map<String, WeakReference<Predictor>> PREDICTORS = new HashMap<>();
 
-    private static TreeModelLoader treeModelLoader = FileTreeModelLoader.getInstance();
+    /**
+     * Tree model loader
+     */
+    private static AbstractLoader treeModelLoader = FileTreeModelLoader.getInstance();
 
+    /**
+     * Due to the limitation of asm framework, generated class can not be too large,
+     * thus when the tree nums of model larger than threshold,
+     * will use {@link SimplePredictor} as predictor implementation.
+     * <p>
+     * Default threshold is 300, which can meet the requirement of most business scenarios.
+     */
     private static int ASM_GENERATION_TREE_NUMS_THRESHOLD = 300;
 
-    private TreePredictorFactory() {
-    }
-
-    public static synchronized void setTreeModelLoader(TreeModelLoader loader) {
+    /**
+     * Entry point for user custom model loader, default model loader is {@link FileTreeModelLoader} <br/>
+     * User custom model loader should implement {@link AbstractLoader}
+     *
+     * @param loader custom loader
+     */
+    public static synchronized void setTreeModelLoader(AbstractLoader loader) {
         treeModelLoader = loader;
     }
 
+    /**
+     * Entry point for user to custom tree nums threshold. <br/>
+     * To be careful, the value should not be too large, since asm has a limitation of class size.
+     * Can see the detail {@link org.objectweb.asm.ClassWriter#toByteArray()}
+     *
+     * @param threshold custom value
+     */
     public static synchronized void setGenerationTreeNumsThreshold(int threshold) {
         ASM_GENERATION_TREE_NUMS_THRESHOLD = threshold;
     }
 
+    /**
+     * Refer to {@link TreePredictorFactory#newInstance(java.lang.String, java.lang.String, java.lang.String, boolean)}
+     *
+     * @param modelName model name, should be distinct from exist Predictor, and must only contain character: [a-zA-z0-9_]
+     * @param resource  resource path, if using default model loader, it means file path
+     * @return Predictor instance
+     */
     public static synchronized Predictor newInstance(String modelName, String resource) {
         return newInstance(modelName, resource, null);
     }
 
+    /**
+     * Refer to {@link TreePredictorFactory#newInstance(java.lang.String, java.lang.String, java.lang.String, boolean)}
+     *
+     * @param modelName        model name, should be distinct from exist Predictor, and must only contain character: [a-zA-z0-9_]
+     * @param resource         resource path, if using default model loader, it means file path
+     * @param enableGeneration if enableGeneration is false, will always get {@link SimplePredictor} instance
+     * @return Predictor instance
+     */
     public static synchronized Predictor newInstance(String modelName, String resource, boolean enableGeneration) {
         return newInstance(modelName, resource, null, enableGeneration);
     }
 
+    /**
+     * Refer to {@link TreePredictorFactory#newInstance(java.lang.String, java.lang.String, java.lang.String, boolean)}
+     *
+     * @param modelName        model name, should be distinct from exist Predictor, and must only contain character: [a-zA-z0-9_]
+     * @param resource         resource path, if using default model loader, it means file path
+     * @param saveClassFileDir generated Predictor class save path, can be null if it's not necessary
+     * @return Predictor instance
+     */
     public static synchronized Predictor newInstance(String modelName, String resource, String saveClassFileDir) {
         return newInstance(modelName, resource, saveClassFileDir, true);
     }
 
+    /**
+     * Create predictor from resource: <br/>
+     * 1. load model data from resource path. <br/>
+     * 2. parse to {@link TreeModel} instance.  <br/>
+     * 3. generate {@link Predictor} based on model detail.
+     *
+     * @param modelName        model name, should be distinct from exist Predictor, and must only contain character: [a-zA-z0-9_]
+     * @param resource         resource path, if using default model loader, it means file path
+     * @param saveClassFileDir generated Predictor class save path, can be null if it's not necessary
+     * @param enableGeneration if enableGeneration is false, will always get {@link SimplePredictor} instance
+     * @return Predictor instance
+     */
     public static synchronized Predictor newInstance(String modelName, String resource, String saveClassFileDir,
                                                      boolean enableGeneration) {
+        checkModelName(modelName);
+
         String className = toClassName(modelName);
-        // no longer used predictor will be removed after gc
-        if (predictors.containsKey(className)) {
-            Predictor predictor = predictors.get(className).get();
+        // predictor which is no longer used will be removed after gc
+        if (PREDICTORS.containsKey(className)) {
+            Predictor predictor = PREDICTORS.get(className).get();
             if (predictor != null) {
                 return predictor;
             } else {
-                predictors.remove(className);
+                PREDICTORS.remove(className);
             }
         }
-
         try {
             TreeModel treeModel = treeModelLoader.loadModel(resource);
             Predictor predictor;
@@ -72,7 +133,7 @@ public class TreePredictorFactory {
                 predictor = new SimplePredictor(treeModel);
             } else {
                 // new class loader to do class generation
-                AsmGenerator generator = AsmGenerator.getInstance();
+                PredictorClassGenerator generator = PredictorClassGenerator.getInstance();
                 byte[] bytes = generator.generateCode(className, treeModel);
                 if (StringUtils.isNotBlank(saveClassFileDir)) {
                     saveClass(bytes, className, saveClassFileDir);
@@ -88,32 +149,37 @@ public class TreePredictorFactory {
             // objective decorate
             Predictor objectivePredictor = ObjectivePredictorFactory.decoratePredictorByObjectiveType(predictor, treeModel);
 
-            predictors.put(className, new WeakReference<>(objectivePredictor));
+            PREDICTORS.put(className, new WeakReference<>(objectivePredictor));
             return objectivePredictor;
         } catch (Throwable e) {
-            // TODO opt exception
-            e.printStackTrace();
+            throw new RuntimeException(String.format("fail to generate predict instance, modelName: %s", modelName), e);
         }
-        return null;
     }
 
-    private static void saveClass(byte[] bytes, String className, String dir) {
-        try {
-            String fileName = dir + File.separator + StringUtils.join(className.split("\\."), File.separator) + ".class";
-            File file = new File(fileName);
-            file.getParentFile().mkdirs();
-            file.createNewFile();
+    private static void saveClass(byte[] bytes, String className, String dir) throws Exception {
+        String fileName = customClassFilePath(className, dir);
 
-            FileOutputStream fos = new FileOutputStream(fileName);
+        File file = new File(fileName);
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+
+        try (FileOutputStream fos = new FileOutputStream(fileName)) {
             fos.write(bytes);
-            fos.close();
-        } catch (Throwable e) {
-            // TODO opt exception
-            e.printStackTrace();
         }
+    }
+
+    private static String customClassFilePath(String className, String dir) {
+        return StringUtils.join(dir, File.separator, StringUtils.join(className.split("\\."), File.separator), ".class");
     }
 
     private static String toClassName(String modelName) {
-        return Predictor.predictorClassPrefix + "._" + modelName;
+        return Predictor.PREDICTOR_CLASS_PREFIX + "._" + modelName;
+    }
+
+    private static void checkModelName(String modelName) {
+        // TODO implement me
+        if (false) {
+            throw new IllegalArgumentException(String.format("illegal model name: %s, valid character: [a-zA-z0-9_]", modelName));
+        }
     }
 }

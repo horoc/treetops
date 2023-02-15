@@ -12,7 +12,7 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
 
     private final TreeModel treeModel;
 
-    private static final double kZeroThreshold = 1e-35f;
+    private static final double K_ZERO_THRESHOLD = 1e-35f;
 
     public SimplePredictor(TreeModel treeModel) {
         this.treeModel = treeModel;
@@ -63,8 +63,8 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
             feature = 0.0;
         }
 
-        if (missingType == MissingType.Zero && isZero(feature) ||
-            missingType == MissingType.Nan && Double.isNaN(feature)) {
+        if ((missingType == MissingType.Zero && isZero(feature)) ||
+            (missingType == MissingType.Nan && Double.isNaN(feature))) {
             if (treeNode.isDefaultLeftDecision()) {
                 return decision(treeNode.getLeftNode(), features);
             } else {
@@ -105,6 +105,6 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
     }
 
     private boolean isZero(double val) {
-        return (val >= -kZeroThreshold && val <= kZeroThreshold);
+        return (val >= -K_ZERO_THRESHOLD && val <= K_ZERO_THRESHOLD);
     }
 }

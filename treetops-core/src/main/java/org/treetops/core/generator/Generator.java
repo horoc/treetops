@@ -8,7 +8,21 @@ import org.treetops.core.model.TreeModel;
  */
 public interface Generator {
 
-    Class<?> defineClassFromCode(String name, byte[] code);
+    /**
+     * Load generated class bytecode into memory
+     *
+     * @param className class name
+     * @param code      bytecode data
+     * @return defined class
+     */
+    Class<?> defineClassFromCode(String className, byte[] code);
 
-    byte[] generateCode(String name, TreeModel model);
+    /**
+     * Generate predictor bytecode
+     *
+     * @param className class name
+     * @param model     tree model
+     * @return bytecode data
+     */
+    byte[] generateCode(String className, TreeModel model);
 }
