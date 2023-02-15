@@ -6,15 +6,13 @@ code.
 ## Get Started
 
 ```java
-    Predictor predictor=TreePredictorFactory.newInstance("model_v0",modelFilePath);
+    Predictor predictor = TreePredictorFactory.newInstance("model_v0", modelFilePath);
     predictor.predict(features);
 ```
 
 ## Core Idea
 
-For example, let's say there is one of tree configs of the lightGBM model:
-
-the output of the decision value by this tree is based on every internal and leaf node's split strategy and value.
+For example, let's say there is a tree config in a lightGBM model:
 
 ```
 Tree=0
@@ -36,9 +34,13 @@ is_linear=0
 shrinkage=1
 ```
 
-what treetops mainly do is translate it into hardcode class instead of storing it in a tree-based data structure:
+The output of the decision value by this tree is based on every internal and leaf node's split strategy and value.
 
-bytecode:
+According to the config, we can see there are three internal nodes and four leave nodes, and if we store the tree in a tree-based data structure, in order to do the decision, we need to iterator from the tree root to the leave. There would be lots of memory access and function calls during the prediction process in a large tree. 
+
+**<u>What treetops mainly do is translate the model file into a hardcode class instead of storing it in a tree-based data structure, and that's the core idea of treetops.</u>**
+
+We can see the generated prediction method of this tree by treetops:
 
 ```
 private tree_0([D)D
@@ -82,12 +84,14 @@ the corresponding java code is:
 ## Performance
 
 Test Model: NycTaxi ( 100 Trees )
+
 Environment: Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz,  2 Core
+
 Workflow: 20,000 times prediction warm-up, then test 100 times prediction elapsed time.
 
 Result: 
 ```
 SimplePredictor (tree-based data structure) : 738,283 ns
-Treetops GeneratedPredictor : 60, 620 ns
+Treetops GeneratedPredictor : 60,620 ns
 ```
 
