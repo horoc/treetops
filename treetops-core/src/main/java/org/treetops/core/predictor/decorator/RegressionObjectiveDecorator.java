@@ -17,6 +17,11 @@ public class RegressionObjectiveDecorator implements OutputConvertor, Predictor 
     private boolean sqrt = false;
 
     @Override
+    public double[] predict(double[] features) {
+        return convert(predictor.predict(features));
+    }
+
+    @Override
     public double[] predictRaw(double[] features) {
         return predictor.predictRaw(features);
     }
