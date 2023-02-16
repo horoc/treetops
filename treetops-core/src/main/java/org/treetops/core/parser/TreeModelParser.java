@@ -29,6 +29,11 @@ public class TreeModelParser {
     private static final int DEFAULT_LEFT_MASK = 2;
 
     /**
+     * Model file config separator
+     */
+    private static final String CONFIG_SEPARATOR = " ";
+
+    /**
      * Parse workflow: <br/>
      * 1. iterator each line to find meta block header or tree block header <br/>
      * 2. parse different block into tree model instance <br/>
@@ -207,14 +212,14 @@ public class TreeModelParser {
 
     private static String parseObjectiveType(String objective) {
         if (StringUtils.isNotBlank(objective)) {
-            return objective.split(" ")[0];
+            return objective.split(CONFIG_SEPARATOR)[0];
         }
         return StringUtils.EMPTY;
     }
 
     private static String parseObjectiveConfig(String objective) {
         if (StringUtils.isNotBlank(objective)) {
-            String[] sp = objective.split(" ");
+            String[] sp = objective.split(CONFIG_SEPARATOR);
             if (sp.length > 1) {
                 return sp[1];
             }
@@ -223,7 +228,7 @@ public class TreeModelParser {
     }
 
     private static <T> List<T> fromStringToList(String str, Function<String, T> converter) {
-        String[] splits = str.split(" ");
+        String[] splits = str.split(CONFIG_SEPARATOR);
         List<T> ret = new ArrayList<>(splits.length);
         for (String val : splits) {
             ret.add(converter.apply(val));

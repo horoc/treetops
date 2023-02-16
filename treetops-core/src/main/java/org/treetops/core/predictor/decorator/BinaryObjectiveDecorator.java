@@ -13,6 +13,7 @@ import org.treetops.core.predictor.Predictor;
  */
 public class BinaryObjectiveDecorator implements OutputConvertor, Predictor {
 
+    private static final String CONFIG_SEPARATOR = ":";
     private Predictor predictor;
     private double sigmoid;
 
@@ -40,7 +41,7 @@ public class BinaryObjectiveDecorator implements OutputConvertor, Predictor {
 
     private double parseSigmoidValue(String objectiveConfig) {
         if (StringUtils.isNotBlank(objectiveConfig)) {
-            String[] sp = objectiveConfig.split(":");
+            String[] sp = objectiveConfig.split(CONFIG_SEPARATOR);
             if (sp.length >= 1) {
                 return Double.parseDouble(sp[1]);
             }

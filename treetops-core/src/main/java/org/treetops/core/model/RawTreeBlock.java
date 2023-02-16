@@ -22,55 +22,46 @@ public class RawTreeBlock {
      * - num_cat=%d
      */
     private int numCat;
-
     /**
      * match with model file field:
      * - split_feature=%f %f ...
      */
     private List<Integer> splitFeature;
-
     /**
      * match with model file field:
      * - decision_type=%d %d ...
      */
     private List<Integer> decisionType;
-
     /**
      * match with model file field:
      * - left_child=%d %d ...
      */
     private List<Integer> leftChild;
-
     /**
      * match with model file field:
      * - left_child=%d %d ...
      */
     private List<Integer> rightChild;
-
     /**
      * match with model file field:
      * - leaf_value=%f %f ...
      */
     private List<Double> leafValue;
-
     /**
      * match with model file field:
      * - internal_value=%f %f ...
      */
     private List<Double> internalValue;
-
     /**
      * match with model file field:
      * - threshold=%f %f ...
      */
     private List<Double> threshold;
-
     /**
      * match with model file field:
      * - cat_boundaries=%d %d ...
      */
     private List<Integer> catBoundaries;
-
     /**
      * match with model file field:
      * - cat_threshold=%f %f ...

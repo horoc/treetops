@@ -7,22 +7,33 @@ import java.util.List;
  * @date 2023/2/14
  */
 public class TreeNode {
+
     private int treeIndex;
+
     private int nodeIndex;
+
     private boolean isCategoryNode;
+
     private boolean isDefaultLeftDecision;
+
     private int decisionType;
 
     private List<Integer> splitFeatures;
+
     private double threshold;
+
     private int catBoundaryBegin;
+
     private int catBoundaryEnd;
+
     private List<Long> catThreshold;
 
     private TreeNode leftNode;
+
     private TreeNode rightNode;
 
     private boolean isLeaf;
+
     private double leafValue;
 
     private List<TreeNode> allNodes;

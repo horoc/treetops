@@ -2,10 +2,8 @@ package org.treetops.core.generator;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -18,6 +16,9 @@ import org.treetops.core.model.TreeModel;
 import org.treetops.core.model.TreeNode;
 
 /**
+ * Predictor class generator based on asm framework
+ * <p></p>
+ *
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */
@@ -25,14 +26,32 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
 
     private static final int FEATURE_PARAMETER_INDEX = 1;
 
+    private static final double K_ZERO_THRESHOLD = 1e-35f;
+
+    private static final String INIT = "<init>";
+
+    private static final String TREE_METHOD_PREFIX = "tree_";
+
+    private static final String OBJECT_INTERNAL_NAME = "java/lang/Object";
+
+    private static final String PREDICTOR_INTERNAL_NAME = "org/treetops/core/predictor/Predictor";
+
+    private static final String META_DATA_HOLDER_INTERNAL_NAME = "org/treetops/core/predictor/MetaDataHolder";
+
+    private static final String PREDICT_METHOD = "predictRaw";
+
+    private static final String FIND_CAT_BIT_SET_METHOD = "findCatBitset";
+
     private PredictorClassGenerator() {
     }
 
+    /**
+     * We can not maintain a singleton instance of generator here, <br/>
+     * since we want jvm to unload class which would be no longer used
+     *
+     * @return predictor instance
+     */
     public static PredictorClassGenerator getInstance() {
-        /*
-            It's not singleton here, will create a new class loader everytime
-            aim to help gc unload unused model
-         */
         return new PredictorClassGenerator();
     }
 
@@ -49,10 +68,10 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
 
         // define class
         cv.visit(V1_8, ACC_PUBLIC | ACC_SUPER, toInternalName(internalClassName), null, getSuperName(model),
-            new String[] {"org/treetops/core/predictor/Predictor"});
+            new String[] {PREDICTOR_INTERNAL_NAME});
 
-        // define method
-        addInitMethod(cv, internalClassName, model);
+        // define init method
+        addInitMethod(cv, model);
 
         // tree decision method
         // description : private double tree_[%tree_index](double[] features);
@@ -65,14 +84,20 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
         return cw.toByteArray();
     }
 
-    private void addInitMethod(ClassVisitor cv, String className, TreeModel model) {
-        MethodVisitor methodVisitor = cv.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+    /**
+     * Define init method
+     *
+     * @param cv    class visitor
+     * @param model model config
+     */
+    private void addInitMethod(ClassVisitor cv, TreeModel model) {
+        MethodVisitor methodVisitor = simpleVisitMethod(cv, ACC_PUBLIC, INIT, "()V");
         methodVisitor.visitCode();
         methodVisitor.visitVarInsn(ALOAD, 0);
         if (model.isContainsCatNode()) {
-            methodVisitor.visitMethodInsn(INVOKESPECIAL, "org/treetops/core/predictor/MetaDataHolder", "<init>", "()V", false);
+            methodVisitor.visitMethodInsn(INVOKESPECIAL, META_DATA_HOLDER_INTERNAL_NAME, INIT, "()V", false);
         } else {
-            methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+            methodVisitor.visitMethodInsn(INVOKESPECIAL, OBJECT_INTERNAL_NAME, INIT, "()V", false);
         }
         methodVisitor.visitInsn(RETURN);
         methodVisitor.visitMaxs(1, 1);
@@ -80,7 +105,7 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
     }
 
     private void addPredictionMethod(ClassVisitor cv, String className, TreeModel model) {
-        MethodVisitor methodVisitor = cv.visitMethod(ACC_PUBLIC, "predictRaw", "([D)[D", null, null);
+        MethodVisitor methodVisitor = simpleVisitMethod(cv, ACC_PUBLIC, PREDICT_METHOD, "([D)[D");
         methodVisitor.visitCode();
 
         methodVisitor.visitLdcInsn(model.getNumClass());
@@ -95,7 +120,7 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
             methodVisitor.visitInsn(DALOAD);
             methodVisitor.visitVarInsn(ALOAD, 0);
             methodVisitor.visitVarInsn(ALOAD, 1);
-            methodVisitor.visitMethodInsn(INVOKESPECIAL, className, "tree_" + root.getTreeIndex(), "([D)D", false);
+            methodVisitor.visitMethodInsn(INVOKESPECIAL, className, TREE_METHOD_PREFIX + root.getTreeIndex(), "([D)D", false);
             methodVisitor.visitInsn(DADD);
             methodVisitor.visitInsn(DASTORE);
         }
@@ -106,23 +131,15 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
         methodVisitor.visitEnd();
     }
 
-    private void addTreeMethod(ClassVisitor classWriter, String className, TreeNode root) {
-        {
-            MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PRIVATE, "tree_" + root.getTreeIndex(), "([D)D", null, null);
-            methodVisitor.visitCode();
+    private void addTreeMethod(ClassVisitor cv, String className, TreeNode root) {
+        MethodVisitor methodVisitor = simpleVisitMethod(cv, ACC_PRIVATE, TREE_METHOD_PREFIX + root.getTreeIndex(), "([D)D");
+        methodVisitor.visitCode();
 
-            Map<Integer, Label> labels = new HashMap<>(root.getAllNodes().size());
-            for (TreeNode node : root.getAllNodes()) {
-                labels.put(node.getNodeIndex(), new Label());
-            }
+        Map<Integer, Label> labels = root.getAllNodes().stream().collect(Collectors.toMap(TreeNode::getNodeIndex, o -> new Label()));
+        root.getAllNodes().forEach(node -> defineNodeBlock(node, className, methodVisitor, labels));
 
-            for (TreeNode node : root.getAllNodes()) {
-                defineNodeBlock(node, className, methodVisitor, labels);
-            }
-
-            methodVisitor.visitMaxs(1, 1);
-            methodVisitor.visitEnd();
-        }
+        methodVisitor.visitMaxs(1, 1);
+        methodVisitor.visitEnd();
     }
 
     private void defineNodeBlock(TreeNode node, String className, MethodVisitor methodVisitor, Map<Integer, Label> labels) {
@@ -172,13 +189,13 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
             Label label = new Label();
             // if feature < -1e-35, not zero, jump to continue
             methodVisitor.visitVarInsn(DLOAD, 2);
-            methodVisitor.visitLdcInsn(new Double("-1E-35"));
+            methodVisitor.visitLdcInsn(new Double(-K_ZERO_THRESHOLD));
             methodVisitor.visitInsn(DCMPL);
             methodVisitor.visitJumpInsn(IFLT, label);
 
             // if feature > 1e-35, not zero, jump to continue
             methodVisitor.visitVarInsn(DLOAD, 2);
-            methodVisitor.visitLdcInsn(new Double("1E-35"));
+            methodVisitor.visitLdcInsn(new Double(K_ZERO_THRESHOLD));
             methodVisitor.visitInsn(DCMPG);
             methodVisitor.visitJumpInsn(IFGT, label);
 
@@ -249,7 +266,7 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
         methodVisitor.visitLdcInsn(node.getCatBoundaryBegin());
         methodVisitor.visitLdcInsn(node.getCatBoundaryEnd() - node.getCatBoundaryBegin());
         methodVisitor.visitVarInsn(DLOAD, 2);
-        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, className, "findCatBitset", "(IIID)Z", false);
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, className, FIND_CAT_BIT_SET_METHOD, "(IIID)Z", false);
         methodVisitor.visitJumpInsn(IFNE, labels.get(node.getLeftNode().getNodeIndex()));
 
         // others, jump left child node
@@ -263,6 +280,9 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
         methodVisitor.visitInsn(DALOAD);
     }
 
+    private MethodVisitor simpleVisitMethod(ClassVisitor cv, int access, String name, String descriptor) {
+        return cv.visitMethod(access, name, descriptor, null, null);
+    }
 
     private String toInternalName(String name) {
         return StringUtils.join(name.split("\\."), "/");
@@ -270,9 +290,9 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
 
     private String getSuperName(TreeModel model) {
         if (model.isContainsCatNode()) {
-            return "org/treetops/core/predictor/MetaDataHolder";
+            return META_DATA_HOLDER_INTERNAL_NAME;
         } else {
-            return "java/lang/Object";
+            return OBJECT_INTERNAL_NAME;
         }
     }
 }

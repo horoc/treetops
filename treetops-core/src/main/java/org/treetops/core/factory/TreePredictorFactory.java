@@ -159,6 +159,9 @@ public class TreePredictorFactory {
         }
     }
 
+    /**
+     * Save raw bytecode into file
+     */
     private static void saveClass(byte[] bytes, String className, String dir) throws Exception {
         String fileName = customClassFilePath(className, dir);
 
@@ -175,6 +178,9 @@ public class TreePredictorFactory {
         return StringUtils.join(dir, File.separator, StringUtils.join(className.split("\\."), File.separator), ".class");
     }
 
+    /**
+     * Generated class will start with '_'
+     */
     private static String toClassName(String modelName) {
         return Predictor.PREDICTOR_CLASS_PREFIX + "._" + modelName;
     }

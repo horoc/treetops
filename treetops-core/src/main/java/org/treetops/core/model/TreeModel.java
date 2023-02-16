@@ -8,9 +8,13 @@ import java.util.List;
  * @date 2023/2/14
  */
 public class TreeModel {
+
     private int numClass;
+
     private int numberTreePerIteration;
+
     private int maxFeatureIndex;
+
     private boolean containsCatNode;
 
     private String objectiveType;
