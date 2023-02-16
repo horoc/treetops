@@ -1,7 +1,6 @@
 # Treetops
 
-Fast LightGBM tree model interference library for Java. Based on ASM dynamic code generation and implementation by pure Java
-code.
+Fast LightGBM tree model interference Java library which is based on ASM dynamic code generation framework.
 
 ## Get Started
 
