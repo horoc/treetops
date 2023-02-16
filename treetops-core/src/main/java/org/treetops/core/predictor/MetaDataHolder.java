@@ -16,7 +16,7 @@ public class MetaDataHolder {
     /**
      * category bit threshold used in process of category node decision
      */
-    protected long[][] catBitSet;
+    private long[][] catBitSet;
 
     public void initialize(TreeModel model) {
         if (model.isContainsCatNode()) {
