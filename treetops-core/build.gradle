@@ -1,22 +1,8 @@
-plugins {
-    id 'java'
-}
-
-group 'org.treetops'
-version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation 'commons-io:commons-io:2.11.0'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-    implementation group: 'org.ow2.asm', name: 'asm', version: '9.4'
-    implementation group: 'org.ow2.asm', name: 'asm-commons', version: '9.4'
-    implementation group: 'org.ow2.asm', name: 'asm-util', version: '9.4'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.ow2.asm:asm:9.4'
+    implementation 'org.ow2.asm:asm-util:9.4'
 }
 
 test {

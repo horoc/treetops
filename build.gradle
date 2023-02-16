@@ -1,31 +1,40 @@
 plugins {
-    id 'java'
-    id 'maven-publish'
-    id 'signing'
-    id 'checkstyle'
     id "io.github.reyerizo.gradle.jcstress" version "0.8.14"
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'org.asciidoctor.jvm.gems' version '3.3.2'
-    id "me.champeau.jmh" version "0.5.3"
+    id "me.champeau.gradle.jmh" version "0.5.3"
 }
 
 group 'org.treetops'
 version '1.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
-}
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+    apply plugin: 'checkstyle'
+    apply plugin: "io.github.reyerizo.gradle.jcstress"
+    apply plugin: 'org.asciidoctor.jvm.convert'
+    apply plugin: 'org.asciidoctor.jvm.gems'
+    apply plugin: "me.champeau.gradle.jmh"
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 
-dependencies {
-    checkstyle 'com.puppycrawl.tools:checkstyle:10.4'
-    implementation 'commons-io:commons-io:2.11.0'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-    implementation group: 'org.ow2.asm', name: 'asm', version: '9.4'
-    implementation group: 'org.ow2.asm', name: 'asm-util', version: '9.4'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    dependencies {
+        repositories {
+            mavenCentral()
+        }
+    }
+
+    plugins.withType(JavaPlugin) {
+        dependencies {
+            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+            testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+        }
+    }
 }
 
 test {

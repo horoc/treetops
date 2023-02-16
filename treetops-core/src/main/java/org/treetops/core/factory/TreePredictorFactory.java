@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.treetops.core.generator.PredictorClassGenerator;
 import org.treetops.core.loader.AbstractLoader;
@@ -28,6 +29,8 @@ public class TreePredictorFactory {
      * Predictor instance cache pool
      */
     private static final Map<String, WeakReference<Predictor>> PREDICTORS = new HashMap<>();
+
+    private static final Pattern MODEL_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
 
     /**
      * Tree model loader
@@ -177,8 +180,7 @@ public class TreePredictorFactory {
     }
 
     private static void checkModelName(String modelName) {
-        // TODO implement me
-        if (false) {
+        if (!MODEL_NAME_PATTERN.matcher(modelName).matches()) {
             throw new IllegalArgumentException(String.format("illegal model name: %s, valid character: [a-zA-z0-9_]", modelName));
         }
     }
