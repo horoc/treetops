@@ -94,3 +94,12 @@ SimplePredictor (tree-based data structure) : 738,283 ns
 Treetops GeneratedPredictor : 60,620 ns
 ```
 
+## Author
+
+* **Chen Zhou** - *Initial work* - [ChenZhou](https://github.com/horoc)
+
+See also the list of [contributors](https://github.com/horoc/treetops/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
