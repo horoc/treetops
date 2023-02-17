@@ -82,6 +82,9 @@ the corresponding java code is:
 
 ## Performance
 
+![](./docs/imgs/benchmark.png)
+
+
 Test Model: NycTaxi ( 100 Trees )
 
 Environment: Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz,  2 Core

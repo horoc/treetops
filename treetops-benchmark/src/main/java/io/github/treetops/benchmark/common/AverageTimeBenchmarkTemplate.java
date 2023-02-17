@@ -34,7 +34,7 @@ public abstract class AverageTimeBenchmarkTemplate {
 
     protected double[] features;
 
-    private static final int batchSize = 100;
+    private static final int batchSize = 500;
 
     /**
      * model name, model file should be modelName.txt
