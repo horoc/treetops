@@ -1,19 +1,25 @@
-plugins {
-    id 'java'
-}
-
-group 'org.treetops'
-version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
+configurations.all {
+    resolutionStrategy {
+        force 'org.ow2.asm:asm:9.4'
+    }
 }
 
 dependencies {
+    implementation project(':treetops-core')
+    implementation 'org.openjdk.jmh:jmh-core:1.35'
+    implementation 'org.openjdk.jmh:jmh-generator-annprocess:1.35'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
 test {
     useJUnitPlatform()
+}
+
+sourceSets {
+    jmh {
+        java.srcDirs = ['src/main/java']
+        resources.srcDirs = ['src/main/resources']
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
 }

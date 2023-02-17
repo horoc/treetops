@@ -2,21 +2,21 @@ plugins {
     id "io.github.reyerizo.gradle.jcstress" version "0.8.14"
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'org.asciidoctor.jvm.gems' version '3.3.2'
-    id "me.champeau.gradle.jmh" version "0.5.3"
+    id "me.champeau.jmh" version "0.6.8"
 }
 
-group 'org.treetops'
+group 'io.github.treetops'
 version '1.0-SNAPSHOT'
 
 allprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
-    apply plugin: 'checkstyle'
+    // apply plugin: 'checkstyle'
     apply plugin: "io.github.reyerizo.gradle.jcstress"
     apply plugin: 'org.asciidoctor.jvm.convert'
     apply plugin: 'org.asciidoctor.jvm.gems'
-    apply plugin: "me.champeau.gradle.jmh"
+    apply plugin: "me.champeau.jmh"
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
