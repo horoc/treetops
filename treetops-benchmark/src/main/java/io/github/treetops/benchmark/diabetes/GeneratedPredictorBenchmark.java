@@ -1,4 +1,4 @@
-package io.github.treetops.benchmark.wine;
+package io.github.treetops.benchmark.diabetes;
 
 import java.util.Random;
 
@@ -12,7 +12,7 @@ public class GeneratedPredictorBenchmark extends AverageTimeBenchmarkTemplate {
 
     @Override
     protected String modelName() {
-        return "wine_model";
+        return "diabetes_model";
     }
 
     @Override
@@ -22,10 +22,14 @@ public class GeneratedPredictorBenchmark extends AverageTimeBenchmarkTemplate {
 
     @Override
     protected double[] getFeature() {
-        features = new double[30];
+        features = new double[10];
         Random r = new Random();
         for (int i = 0; i < features.length; i++) {
-            features[i] = -2.0 + 4 * r.nextDouble();
+            if (i == 1) {
+                features[i] = r.nextInt(2);
+            } else {
+                features[i] = -2.0 + 4 * r.nextDouble();
+            }
         }
         return features;
     }

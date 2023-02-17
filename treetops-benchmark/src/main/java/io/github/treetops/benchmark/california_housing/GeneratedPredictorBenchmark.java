@@ -1,4 +1,4 @@
-package io.github.treetops.benchmark.wine;
+package io.github.treetops.benchmark.california_housing;
 
 import java.util.Random;
 
@@ -12,7 +12,7 @@ public class GeneratedPredictorBenchmark extends AverageTimeBenchmarkTemplate {
 
     @Override
     protected String modelName() {
-        return "wine_model";
+        return "california_housing_model";
     }
 
     @Override
@@ -22,7 +22,7 @@ public class GeneratedPredictorBenchmark extends AverageTimeBenchmarkTemplate {
 
     @Override
     protected double[] getFeature() {
-        features = new double[30];
+        features = new double[8];
         Random r = new Random();
         for (int i = 0; i < features.length; i++) {
             features[i] = -2.0 + 4 * r.nextDouble();

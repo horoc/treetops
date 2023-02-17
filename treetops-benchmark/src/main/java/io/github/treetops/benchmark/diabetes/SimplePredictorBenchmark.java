@@ -1,4 +1,4 @@
-package io.github.treetops.benchmark.wine;
+package io.github.treetops.benchmark.diabetes;
 
 /**
  * @author chenzhou@apache.org

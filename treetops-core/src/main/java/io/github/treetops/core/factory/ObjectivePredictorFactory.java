@@ -7,6 +7,7 @@ import io.github.treetops.core.model.TreeModel;
 import io.github.treetops.core.predictor.Predictor;
 import io.github.treetops.core.predictor.decorator.BinaryObjectiveDecorator;
 import io.github.treetops.core.predictor.decorator.AbstractOutputConvertor;
+import io.github.treetops.core.predictor.decorator.MultiClassObjectiveDecorator;
 import io.github.treetops.core.predictor.decorator.RegressionObjectiveDecorator;
 
 /**
@@ -27,6 +28,7 @@ public class ObjectivePredictorFactory {
         CONVERTORS.put("binary", BinaryObjectiveDecorator.class);
         CONVERTORS.put("regression", RegressionObjectiveDecorator.class);
         CONVERTORS.put("regression_l1", RegressionObjectiveDecorator.class);
+        CONVERTORS.put("multiclass", MultiClassObjectiveDecorator.class);
     }
 
     /**

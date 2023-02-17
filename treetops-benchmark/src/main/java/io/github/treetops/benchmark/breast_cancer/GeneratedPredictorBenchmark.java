@@ -1,4 +1,4 @@
-package io.github.treetops.benchmark.wine;
+package io.github.treetops.benchmark.breast_cancer;
 
 import java.util.Random;
 
@@ -12,7 +12,7 @@ public class GeneratedPredictorBenchmark extends AverageTimeBenchmarkTemplate {
 
     @Override
     protected String modelName() {
-        return "wine_model";
+        return "breast_cancer_model";
     }
 
     @Override

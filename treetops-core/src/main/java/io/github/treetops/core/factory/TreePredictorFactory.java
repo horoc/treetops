@@ -142,11 +142,12 @@ public class TreePredictorFactory {
                     saveClass(bytes, className, saveClassFileDir);
                 }
                 Object targetObj = generator.defineClassFromCode(className, bytes).newInstance();
-                // init meta data if need
-                if (targetObj instanceof MetaDataHolder) {
-                    ((MetaDataHolder) targetObj).initialize(treeModel);
-                }
                 predictor = (Predictor) targetObj;
+            }
+
+            // init meta data if need
+            if (predictor instanceof MetaDataHolder) {
+                ((MetaDataHolder) predictor).initialize(treeModel);
             }
 
             // objective decorate
