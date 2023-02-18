@@ -2,7 +2,25 @@
 
 Fast LightGBM tree model interference Java library which is based on ASM dynamic code generation framework.
 
-## Get Started
+## How Fast
+
+![](./docs/imgs/benchmark.png)
+
+- Asm: Generated lightGBM predictor based on ASM framework.
+- Simple: Tree-based data structure predictor which follows the LightGBM cpp official implementation.
+
+Test Models:
+
+> bc: model trained by breast cancer dataset (100 trees, binary)  
+> 
+> ch: model trained by california housing dataset (100 trees, regression) 
+>
+> db: model trained by diabetes dataset (100 trees, regression) 
+>
+> wn: model trained by wine dataset (300 trees, classification)
+
+
+## Quick Start
 
 ```java
     Predictor predictor = TreePredictorFactory.newInstance("model_v0", modelFilePath);
@@ -11,7 +29,11 @@ Fast LightGBM tree model interference Java library which is based on ASM dynamic
 
 ## Core Idea
 
-For example, let's say there is a tree config in a lightGBM model:
+**<u>What treetops mainly do is translate the model file into a hardcode class instead of storing it in a tree-based data structure, and that's the core idea of treetops.</u>**
+
+### Example
+
+For example, the following configuration is one of the trees in a model.
 
 ```
 Tree=0
@@ -33,13 +55,13 @@ is_linear=0
 shrinkage=1
 ```
 
-The output of the decision value by this tree is based on every internal and leaf node's split strategy and value.
+The output decision value of this tree is based on every internal and leaf node's split strategy and value.
 
-According to the config, we can see there are three internal nodes and four leave nodes, and if we store the tree in a tree-based data structure, in order to do the decision, we need to iterator from the tree root to the leave. There would be lots of memory access and function calls during the prediction process in a large tree. 
+According to the config, we can see there are three internal nodes and four leave nodes. If we store this tree in a tree-based data structure, in order to do the decision, we need to iterator from the tree root to the leaves. There would introduce lots of memory access and function calls during the prediction process in a large tree. This also affects the hit rate of the CPU instruction cache.
 
-**<u>What treetops mainly do is translate the model file into a hardcode class instead of storing it in a tree-based data structure, and that's the core idea of treetops.</u>**
+If we hardcode the tree structure, we can optimize these overhead.
 
-We can see the generated prediction method of this tree by treetops:
+like:
 
 ```
 private tree_0([D)D
@@ -65,7 +87,7 @@ private tree_0([D)D
     MAXLOCALS = 4
 ```
 
-the corresponding java code is:
+the corresponding java code :
 
 ```java
     private double tree_0(double[] var1) {
@@ -78,23 +100,6 @@ the corresponding java code is:
             return var2 == var2 && !(var2 < 0.9070836626874522D) ? 0.5068894836955886D : 0.4951066126651434D;
         }
     }
-```
-
-## Performance
-
-![](./docs/imgs/benchmark.png)
-
-
-Test Model: NycTaxi ( 100 Trees )
-
-Environment: Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz,  2 Core
-
-Workflow: 20,000 times prediction warm-up, then test 100 times prediction elapsed time.
-
-Result: 
-```
-SimplePredictor (tree-based data structure) : 738,283 ns
-Treetops GeneratedPredictor : 60,620 ns
 ```
 
 ## Author
