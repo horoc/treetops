@@ -41,7 +41,7 @@ allprojects {
         ignoreFailures = false
         showViolations = true
         maxWarnings = 0
-        configFile = new File("${rootDir}/style/checkstyle.xml")
+        configFile = new File("${rootDir}/checkstyle/checkstyle.xml")
     }
 
     checkstyleTest
