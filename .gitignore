@@ -2,7 +2,6 @@
 *.log
 *.ctxt
 .mtj.tmp/
-*.jar
 *.war
 *.nar
 *.ear
@@ -43,6 +42,5 @@ Guardfile
 README.html
 *.iml
 .idea
-gradle/*
 test
 Mock*
