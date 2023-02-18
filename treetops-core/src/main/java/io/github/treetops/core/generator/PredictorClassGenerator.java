@@ -1,10 +1,11 @@
 package io.github.treetops.core.generator;
 
-import org.apache.commons.lang3.StringUtils;
-
+import io.github.treetops.core.model.MissingType;
+import io.github.treetops.core.model.TreeModel;
+import io.github.treetops.core.model.TreeNode;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import org.apache.commons.lang3.StringUtils;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -12,18 +13,14 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.util.CheckClassAdapter;
 
-import io.github.treetops.core.model.MissingType;
-import io.github.treetops.core.model.TreeModel;
-import io.github.treetops.core.model.TreeNode;
-
 /**
- * Predictor class generator based on asm framework
+ * Predictor class generator based on asm framework.
  * <p></p>
  *
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */
-public class PredictorClassGenerator extends ClassLoader implements Generator, Opcodes {
+public final class PredictorClassGenerator extends ClassLoader implements Generator, Opcodes {
 
     private static final int FEATURE_PARAMETER_INDEX = 1;
 
@@ -48,7 +45,7 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
 
     /**
      * We can not maintain a singleton instance of generator here, <br/>
-     * since we want jvm to unload class which would be no longer used
+     * since we want jvm to unload class which would be no longer used.
      *
      * @return predictor instance
      */
@@ -57,12 +54,12 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
     }
 
     @Override
-    public Class<?> defineClassFromCode(String className, byte[] code) {
+    public Class<?> defineClassFromCode(final String className, final byte[] code) {
         return this.defineClass(className, code, 0, code.length);
     }
 
     @Override
-    public byte[] generateCode(String className, TreeModel model) {
+    public byte[] generateCode(final String className, final TreeModel model) {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         ClassVisitor cv = new CheckClassAdapter(cw);
         String internalClassName = toInternalName(className);
@@ -86,12 +83,12 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
     }
 
     /**
-     * Define init method
+     * Define init method.
      *
      * @param cv    class visitor
      * @param model model config
      */
-    private void addInitMethod(ClassVisitor cv, TreeModel model) {
+    private void addInitMethod(ClassVisitor cv, final TreeModel model) {
         MethodVisitor methodVisitor = simpleVisitMethod(cv, ACC_PUBLIC, INIT, "()V");
         methodVisitor.visitCode();
         methodVisitor.visitVarInsn(ALOAD, 0);
@@ -105,7 +102,7 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
         methodVisitor.visitEnd();
     }
 
-    private void addPredictionMethod(ClassVisitor cv, String className, TreeModel model) {
+    private void addPredictionMethod(ClassVisitor cv, final String className, final TreeModel model) {
         MethodVisitor methodVisitor = simpleVisitMethod(cv, ACC_PUBLIC, PREDICT_METHOD, "([D)[D");
         methodVisitor.visitCode();
 
@@ -132,31 +129,32 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
         methodVisitor.visitEnd();
     }
 
-    private void addTreeMethod(ClassVisitor cv, String className, TreeNode root) {
+    private void addTreeMethod(ClassVisitor cv, final String className, final TreeNode root) {
         MethodVisitor methodVisitor = simpleVisitMethod(cv, ACC_PRIVATE, TREE_METHOD_PREFIX + root.getTreeIndex(), "([D)D");
         methodVisitor.visitCode();
 
         Map<Integer, Label> labels = root.getAllNodes().stream().collect(Collectors.toMap(TreeNode::getNodeIndex, o -> new Label()));
-        root.getAllNodes().forEach(node -> defineNodeBlock(node, className, methodVisitor, labels));
+        root.getAllNodes().forEach(node -> defineNodeBlock(methodVisitor, node, className, labels));
 
         methodVisitor.visitMaxs(1, 1);
         methodVisitor.visitEnd();
     }
 
-    private void defineNodeBlock(TreeNode node, String className, MethodVisitor methodVisitor, Map<Integer, Label> labels) {
+    private void defineNodeBlock(MethodVisitor methodVisitor, final TreeNode node, final String className,
+                                 final Map<Integer, Label> labels) {
         if (node.isLeaf()) {
-            defineLeafNodeBlock(node, methodVisitor, labels);
+            defineLeafNodeBlock(methodVisitor, node, labels);
             return;
         }
 
         if (node.isCategoryNode()) {
-            defineCategoryNodeBlock(node, className, methodVisitor, labels);
+            defineCategoryNodeBlock(methodVisitor, node, className, labels);
         } else {
-            defineNumericalNodeBlock(node, methodVisitor, labels);
+            defineNumericalNodeBlock(methodVisitor, node, labels);
         }
     }
 
-    private void defineLeafNodeBlock(TreeNode node, MethodVisitor methodVisitor, Map<Integer, Label> labels) {
+    private void defineLeafNodeBlock(MethodVisitor methodVisitor, final TreeNode node, final Map<Integer, Label> labels) {
         int nodeIndex = node.getNodeIndex();
         methodVisitor.visitLabel(labels.get(nodeIndex));
         methodVisitor.visitLdcInsn(new Double(node.getLeafValue()));
@@ -164,7 +162,7 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
     }
 
     @SuppressWarnings("Duplicates")
-    private void defineNumericalNodeBlock(TreeNode node, MethodVisitor methodVisitor, Map<Integer, Label> labels) {
+    private void defineNumericalNodeBlock(MethodVisitor methodVisitor, final TreeNode node, final Map<Integer, Label> labels) {
         int nodeIndex = node.getNodeIndex();
         methodVisitor.visitLabel(labels.get(nodeIndex));
 
@@ -241,7 +239,8 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
         methodVisitor.visitJumpInsn(GOTO, labels.get(node.getLeftNode().getNodeIndex()));
     }
 
-    private void defineCategoryNodeBlock(TreeNode node, String className, MethodVisitor methodVisitor, Map<Integer, Label> labels) {
+    private void defineCategoryNodeBlock(MethodVisitor methodVisitor, final TreeNode node, final String className,
+                                         final Map<Integer, Label> labels) {
         int nodeIndex = node.getNodeIndex();
         methodVisitor.visitLabel(labels.get(nodeIndex));
 
@@ -281,15 +280,16 @@ public class PredictorClassGenerator extends ClassLoader implements Generator, O
         methodVisitor.visitInsn(DALOAD);
     }
 
-    private MethodVisitor simpleVisitMethod(ClassVisitor cv, int access, String name, String descriptor) {
+    private MethodVisitor simpleVisitMethod(ClassVisitor cv, int access, final String name,
+                                            final String descriptor) {
         return cv.visitMethod(access, name, descriptor, null, null);
     }
 
-    private String toInternalName(String name) {
+    private String toInternalName(final String name) {
         return StringUtils.join(name.split("\\."), "/");
     }
 
-    private String getSuperName(TreeModel model) {
+    private String getSuperName(final TreeModel model) {
         if (model.isContainsCatNode()) {
             return META_DATA_HOLDER_INTERNAL_NAME;
         } else {

@@ -1,4 +1,4 @@
-package io.github.treetops.core.predictor.decorator;
+package io.github.treetops.core.predictor.objective;
 
 import io.github.treetops.core.model.TreeModel;
 import io.github.treetops.core.predictor.Predictor;
@@ -11,7 +11,7 @@ public final class RegressionObjectiveDecorator extends AbstractOutputConvertor 
 
     private static final String SQRT_CONFIG_KEY = "sqrt";
 
-    private boolean sqrt = false;
+    private boolean sqrt;
 
     @Override
     public double[] convert(double[] input) {

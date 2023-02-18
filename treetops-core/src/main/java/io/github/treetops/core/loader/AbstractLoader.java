@@ -1,14 +1,11 @@
 package io.github.treetops.core.loader;
 
-
-import org.apache.commons.io.IOUtils;
-
+import io.github.treetops.core.model.TreeModel;
+import io.github.treetops.core.parser.TreeModelParser;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import io.github.treetops.core.model.TreeModel;
-import io.github.treetops.core.parser.TreeModelParser;
+import org.apache.commons.io.IOUtils;
 
 /**
  * @author chenzhou@apache.org
@@ -26,12 +23,12 @@ public abstract class AbstractLoader {
     protected abstract InputStream loadStream(String resource) throws Exception;
 
     /**
-     * Load model from resource based on loadStream implementation, and parse into {@link TreeModel}
+     * Load model from resource based on loadStream implementation, and parse into {@link TreeModel}.
      *
      * @param resource resource pah
      * @return TreeModel instance
      */
-    public TreeModel loadModel(String resource) {
+    public TreeModel loadModel(final String resource) {
         List<String> lines;
         try (InputStream stream = loadStream(resource)) {
             lines = IOUtils.readLines(stream, StandardCharsets.UTF_8);

@@ -9,7 +9,7 @@ import io.github.treetops.core.model.TreeModel;
 public interface Generator {
 
     /**
-     * Load generated class bytecode into memory
+     * Load generated class bytecode into memory.
      *
      * @param className class name
      * @param code      bytecode data
@@ -18,7 +18,7 @@ public interface Generator {
     Class<?> defineClassFromCode(String className, byte[] code);
 
     /**
-     * Generate predictor bytecode
+     * Generate predictor bytecode.
      *
      * @param className class name
      * @param model     tree model

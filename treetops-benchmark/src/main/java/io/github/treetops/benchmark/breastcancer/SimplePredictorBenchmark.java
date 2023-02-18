@@ -1,4 +1,4 @@
-package io.github.treetops.benchmark.breast_cancer;
+package io.github.treetops.benchmark.breastcancer;
 
 /**
  * @author chenzhou@apache.org

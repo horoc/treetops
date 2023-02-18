@@ -1,10 +1,10 @@
-package io.github.treetops.core.predictor.decorator;
+package io.github.treetops.core.predictor.objective;
 
 import io.github.treetops.core.model.TreeModel;
 import io.github.treetops.core.predictor.Predictor;
 
 /**
- * Objective convert function decorator interface
+ * Objective convert function interface.
  * <P></P>
  *
  * @author chenzhou@apache.org
@@ -15,7 +15,7 @@ public abstract class AbstractOutputConvertor implements Predictor {
     protected Predictor predictor;
 
     /**
-     * Convert input based on certain objective type
+     * Convert input based on certain objective strategy.
      *
      * @param input raw input data
      * @return output data
@@ -23,7 +23,7 @@ public abstract class AbstractOutputConvertor implements Predictor {
     public abstract double[] convert(double[] input);
 
     /**
-     * Binding to a predictor
+     * Binding to a predictor.
      *
      * @param predictor predictor which is need to be decorated
      * @param treeModel tree model

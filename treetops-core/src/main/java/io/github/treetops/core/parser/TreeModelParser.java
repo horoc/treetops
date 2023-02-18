@@ -1,17 +1,19 @@
 package io.github.treetops.core.parser;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import io.github.treetops.core.model.RawTreeBlock;
 import io.github.treetops.core.model.TreeModel;
 import io.github.treetops.core.model.TreeNode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * Parse String model info into TreeModel instance
+ * Parse String model info into TreeModel instance.
  *
  * @author chenzhou@apache.org
  * @date 2023/2/14
@@ -19,17 +21,17 @@ import io.github.treetops.core.model.TreeNode;
 public class TreeModelParser {
 
     /**
-     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#kCategoricalMask
+     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#kCategoricalMask.
      */
     private static final int CATEGORICAL_MASK = 1;
 
     /**
-     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#kDefaultLeftMask
+     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#kDefaultLeftMask.
      */
     private static final int DEFAULT_LEFT_MASK = 2;
 
     /**
-     * Model file config separator
+     * Model file config separator.
      */
     private static final String CONFIG_SEPARATOR = " ";
 
@@ -41,7 +43,7 @@ public class TreeModelParser {
      * @param rawLines raw data
      * @return tree model instance
      */
-    public static TreeModel parseTreeModel(List<String> rawLines) {
+    public static TreeModel parseTreeModel(final List<String> rawLines) {
         TreeModel treeModel = new TreeModel();
         int curLineIndex = 0;
         while (curLineIndex < rawLines.size()) {
@@ -69,25 +71,35 @@ public class TreeModelParser {
     }
 
     /**
-     * load meta block info into model
+     * load meta block info into model.
+     *
+     * @param treeModel     tree model
+     * @param rawStingLines raw string lines
+     * @param offset        read offset
+     * @return next offset
      */
-    private static int initMetaBlock(TreeModel treeModel, List<String> rawStingLines, int offset) {
+    private static int initMetaBlock(TreeModel treeModel, final List<String> rawStingLines, int offset) {
         Map<String, String> rawDataMap = new HashMap<>();
-        offset = parseRawKeyValueMap(rawStingLines, rawDataMap, offset);
+        final int nextOffset = parseRawKeyValueMap(rawStingLines, rawDataMap, offset);
         convertAndSetField("objective", rawDataMap, TreeModelParser::parseObjectiveType, treeModel::setObjectiveType);
         convertAndSetField("objective", rawDataMap, TreeModelParser::parseObjectiveConfig, treeModel::setObjectiveConfig);
         convertAndSetField("num_class", rawDataMap, Integer::valueOf, treeModel::setNumClass);
         convertAndSetField("max_feature_idx", rawDataMap, Integer::valueOf, treeModel::setMaxFeatureIndex);
         convertAndSetField("num_tree_per_iteration", rawDataMap, Integer::valueOf, treeModel::setNumberTreePerIteration);
-        return offset;
+        return nextOffset;
     }
 
     /**
-     * load tree block info into model
+     * load tree block info into model.
+     *
+     * @param root          tree node root
+     * @param rawStingLines raw string lines
+     * @param offset        read offset
+     * @return next offset
      */
-    private static int initTreeBlock(TreeNode root, List<String> rawStingLines, int offset) {
+    private static int initTreeBlock(TreeNode root, final List<String> rawStingLines, int offset) {
         Map<String, String> rawDataMap = new HashMap<>();
-        offset = parseRawKeyValueMap(rawStingLines, rawDataMap, offset);
+        final int nextOffset = parseRawKeyValueMap(rawStingLines, rawDataMap, offset);
 
         RawTreeBlock block = new RawTreeBlock();
         convertAndSetField("Tree", rawDataMap, Integer::valueOf, block::setTree);
@@ -128,13 +140,16 @@ public class TreeModelParser {
             }
         });
 
-        return offset;
+        return nextOffset;
     }
 
     /**
-     * load tree node block info into model
+     * load tree node block info into model.
+     *
+     * @param node  tree node
+     * @param block raw block data
      */
-    private static void initTreeSingleNode(TreeNode node, RawTreeBlock block) {
+    private static void initTreeSingleNode(TreeNode node, final RawTreeBlock block) {
         int nodeIndex = node.getNodeIndex();
         node.setLeaf(false);
         node.setTreeIndex(block.getTree());
@@ -151,8 +166,7 @@ public class TreeModelParser {
         }
     }
 
-
-    private static void linkTreeNode(TreeNode node, List<TreeNode> treeNodes, RawTreeBlock block) {
+    private static void linkTreeNode(TreeNode node, List<TreeNode> treeNodes, final RawTreeBlock block) {
         int leftIndex = block.getLeftChild().get(node.getNodeIndex());
         if (leftIndex < 0) {
             TreeNode leftLeaf = new TreeNode(node.getTreeIndex(), leftIndex);
@@ -179,10 +193,11 @@ public class TreeModelParser {
     }
 
     private static int parseRawKeyValueMap(List<String> metaInfos, Map<String, String> rawDataMap, int offset) {
-        for (; offset < metaInfos.size(); offset++) {
-            String line = metaInfos.get(offset);
+        int nextOffset = offset;
+        for (; nextOffset < metaInfos.size(); nextOffset++) {
+            String line = metaInfos.get(nextOffset);
             if (StringUtils.isBlank(line)) {
-                return offset;
+                return nextOffset;
             }
             String[] sp = line.split("=");
             if (sp.length != 2) {
@@ -190,7 +205,7 @@ public class TreeModelParser {
             }
             rawDataMap.put(sp[0], sp[1]);
         }
-        return offset;
+        return nextOffset;
     }
 
     private static boolean isCategoryNode(int decisionType) {
@@ -201,23 +216,22 @@ public class TreeModelParser {
         return (decisionType & DEFAULT_LEFT_MASK) > 0;
     }
 
-    private static boolean isTreeBlockHeader(String line) {
+    private static boolean isTreeBlockHeader(final String line) {
         return StringUtils.isNoneBlank(line) && line.startsWith("Tree=");
     }
 
-    private static boolean isMetaInfoBlockHeader(String line) {
+    private static boolean isMetaInfoBlockHeader(final String line) {
         return StringUtils.isNoneBlank(line) && "tree".equals(line);
     }
 
-
-    private static String parseObjectiveType(String objective) {
+    private static String parseObjectiveType(final String objective) {
         if (StringUtils.isNotBlank(objective)) {
             return objective.split(CONFIG_SEPARATOR)[0];
         }
         return StringUtils.EMPTY;
     }
 
-    private static String parseObjectiveConfig(String objective) {
+    private static String parseObjectiveConfig(final String objective) {
         if (StringUtils.isNotBlank(objective)) {
             String[] sp = objective.split(CONFIG_SEPARATOR);
             if (sp.length > 1) {
@@ -227,7 +241,7 @@ public class TreeModelParser {
         return StringUtils.EMPTY;
     }
 
-    private static <T> List<T> fromStringToList(String str, Function<String, T> converter) {
+    private static <T> List<T> fromStringToList(final String str, Function<String, T> converter) {
         String[] splits = str.split(CONFIG_SEPARATOR);
         List<T> ret = new ArrayList<>(splits.length);
         for (String val : splits) {
@@ -236,7 +250,7 @@ public class TreeModelParser {
         return ret;
     }
 
-    private static <T> void convertAndSetField(String key, Map<String, String> rawDataMap,
+    private static <T> void convertAndSetField(final String key, Map<String, String> rawDataMap,
                                                Function<String, T> converter, Consumer<T> setter) {
         String rawValue = rawDataMap.get(key);
         if (StringUtils.isNoneBlank(rawValue)) {

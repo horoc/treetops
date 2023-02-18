@@ -1,6 +1,4 @@
-package io.github.treetops.core.predictor.decorator;
-
-import java.util.Arrays;
+package io.github.treetops.core.predictor.objective;
 
 import io.github.treetops.core.model.TreeModel;
 import io.github.treetops.core.predictor.Predictor;
@@ -13,23 +11,29 @@ public class MultiClassObjectiveDecorator extends AbstractOutputConvertor {
 
     @Override
     public double[] convert(double[] input) {
-        double expSum = 0.0;
-        for (int i = 0; i < input.length; i++) {
-            expSum += Math.exp(input[i]);
-        }
-        if (expSum == 0.0) {
-            return Arrays.copyOf(input, input.length);
+        double max = input[0];
+        double[] output = new double[input.length];
+        for (int i = 1; i < input.length; i++) {
+            max = max < input[i] ? input[i] : max;
         }
 
-        double[] output = new double[input.length];
+        double expSum = 0.0;
+        for (int i = 0; i < input.length; i++) {
+            output[i] = Math.exp(input[i] - max);
+            expSum += output[i];
+        }
+        if (expSum == 0.0) {
+            return output;
+        }
         for (int i = 0; i < output.length; i++) {
-            output[i] = input[i] / expSum;
+            output[i] = output[i] / expSum;
         }
         return output;
     }
 
     @Override
     public Predictor decorate(Predictor predictor, TreeModel treeModel) {
-        return this.predictor = predictor;
+        this.predictor = predictor;
+        return this;
     }
 }

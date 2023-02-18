@@ -6,15 +6,15 @@ package io.github.treetops.core.model;
  */
 public enum MissingType {
     /**
-     * decision type mask for default None value
+     * decision type mask for default None value.
      */
     None(0),
     /**
-     * decision type mask for default Zero value
+     * decision type mask for default Zero value.
      */
     Zero(1),
     /**
-     * decision type mask for default Nan value
+     * decision type mask for default Nan value.
      */
     Nan(2);
 

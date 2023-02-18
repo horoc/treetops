@@ -1,8 +1,7 @@
 package io.github.treetops.benchmark.diabetes;
 
-import java.util.Random;
-
 import io.github.treetops.benchmark.common.AverageTimeBenchmarkTemplate;
+import java.util.Random;
 
 /**
  * @author chenzhou@apache.org

@@ -1,12 +1,11 @@
-package io.github.treetops.core.predictor.decorator;
-
-import org.apache.commons.lang3.StringUtils;
+package io.github.treetops.core.predictor.objective;
 
 import io.github.treetops.core.model.TreeModel;
 import io.github.treetops.core.predictor.Predictor;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * Binary objective function convertor
+ * Binary objective function convertor.
  *
  * @author chenzhou@apache.org
  * @date 2023/2/14
@@ -14,6 +13,7 @@ import io.github.treetops.core.predictor.Predictor;
 public final class BinaryObjectiveDecorator extends AbstractOutputConvertor {
 
     private static final String CONFIG_SEPARATOR = ":";
+
     private double sigmoid;
 
     @Override

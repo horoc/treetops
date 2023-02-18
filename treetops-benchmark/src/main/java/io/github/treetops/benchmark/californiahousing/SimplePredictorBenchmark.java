@@ -1,4 +1,4 @@
-package io.github.treetops.benchmark.california_housing;
+package io.github.treetops.benchmark.californiahousing;
 
 /**
  * @author chenzhou@apache.org

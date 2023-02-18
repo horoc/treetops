@@ -1,17 +1,16 @@
 package io.github.treetops.core.factory;
 
+import io.github.treetops.core.model.TreeModel;
+import io.github.treetops.core.predictor.Predictor;
+import io.github.treetops.core.predictor.objective.AbstractOutputConvertor;
+import io.github.treetops.core.predictor.objective.BinaryObjectiveDecorator;
+import io.github.treetops.core.predictor.objective.MultiClassObjectiveDecorator;
+import io.github.treetops.core.predictor.objective.RegressionObjectiveDecorator;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.treetops.core.model.TreeModel;
-import io.github.treetops.core.predictor.Predictor;
-import io.github.treetops.core.predictor.decorator.BinaryObjectiveDecorator;
-import io.github.treetops.core.predictor.decorator.AbstractOutputConvertor;
-import io.github.treetops.core.predictor.decorator.MultiClassObjectiveDecorator;
-import io.github.treetops.core.predictor.decorator.RegressionObjectiveDecorator;
-
 /**
- * Predictor objective function decorate factory
+ * Predictor objective function decorate factory.
  * <p></p>
  *
  * @author chenzhou@apache.org
@@ -32,14 +31,14 @@ public class ObjectivePredictorFactory {
     }
 
     /**
-     * Get decorated predictor instance based on tree model config
+     * Get decorated predictor instance based on tree model config.
      *
      * @param predictor raw predictor
      * @param treeModel tree model
      * @return decorated predictor
      * @throws Exception throw exception when getting convertor instance failed
      */
-    static Predictor decoratePredictorByObjectiveType(Predictor predictor, TreeModel treeModel) throws Exception {
+    static Predictor decoratePredictorByObjectiveType(final Predictor predictor, final TreeModel treeModel) throws Exception {
         Class<? extends AbstractOutputConvertor> convertorClass = CONVERTORS.get(treeModel.getObjectiveType());
         if (convertorClass == null) {
             throw new RuntimeException(String.format("unsupported objective type : %s", treeModel.getObjectiveType()));
@@ -51,12 +50,12 @@ public class ObjectivePredictorFactory {
 
     /**
      * Entry point for custom convertor,
-     * new convertor class should implement {@link AbstractOutputConvertor}
+     * new convertor class should implement {@link AbstractOutputConvertor}.
      *
      * @param type  type name, should be distinct from exist convertor
      * @param clazz class
      */
-    public static void registerNewConvertor(String type, Class<? extends AbstractOutputConvertor> clazz) {
+    public static void registerNewConvertor(final String type, final Class<? extends AbstractOutputConvertor> clazz) {
         CONVERTORS.putIfAbsent(type, clazz);
     }
 }

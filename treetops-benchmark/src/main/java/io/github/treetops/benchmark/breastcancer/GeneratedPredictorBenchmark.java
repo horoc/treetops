@@ -1,8 +1,7 @@
-package io.github.treetops.benchmark.california_housing;
-
-import java.util.Random;
+package io.github.treetops.benchmark.breastcancer;
 
 import io.github.treetops.benchmark.common.AverageTimeBenchmarkTemplate;
+import java.util.Random;
 
 /**
  * @author chenzhou@apache.org
@@ -12,7 +11,7 @@ public class GeneratedPredictorBenchmark extends AverageTimeBenchmarkTemplate {
 
     @Override
     protected String modelName() {
-        return "california_housing_model";
+        return "breast_cancer_model";
     }
 
     @Override
@@ -22,7 +21,7 @@ public class GeneratedPredictorBenchmark extends AverageTimeBenchmarkTemplate {
 
     @Override
     protected double[] getFeature() {
-        features = new double[8];
+        features = new double[30];
         Random r = new Random();
         for (int i = 0; i < features.length; i++) {
             features[i] = -2.0 + 4 * r.nextDouble();

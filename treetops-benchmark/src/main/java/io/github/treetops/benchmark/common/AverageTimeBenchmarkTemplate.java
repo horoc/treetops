@@ -1,8 +1,8 @@
 package io.github.treetops.benchmark.common;
 
-import java.util.Random;
+import io.github.treetops.core.factory.TreePredictorFactory;
+import io.github.treetops.core.predictor.Predictor;
 import java.util.concurrent.TimeUnit;
-
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -15,13 +15,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import io.github.treetops.core.factory.TreePredictorFactory;
-import io.github.treetops.core.predictor.Predictor;
-
-/**
- * @author chenzhou@apache.org
- * @date 2023/2/18
- */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Group)
@@ -30,30 +23,32 @@ import io.github.treetops.core.predictor.Predictor;
 @Fork(2)
 public abstract class AverageTimeBenchmarkTemplate {
 
+    private static final int BATCH_SIZE = 500;
+
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected Predictor predictor;
 
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected double[] features;
 
-    private static final int batchSize = 500;
-
     /**
-     * model name, model file should be modelName.txt
+     * model name, model file should be modelName.txt.
      *
-     * @return
+     * @return model name
      */
     protected abstract String modelName();
 
     /**
-     * is test predictor enable generated
+     * is test predictor enable generated.
      *
-     * @return
+     * @return is generated predictor
      */
     protected abstract boolean isGenerated();
 
     /**
-     * get test feature
+     * Get test feature.
      *
-     * @return
+     * @return features
      */
     protected abstract double[] getFeature();
 
@@ -67,7 +62,7 @@ public abstract class AverageTimeBenchmarkTemplate {
     @Benchmark
     @Group
     public void predict() {
-        for (int i = 0; i < batchSize; i++) {
+        for (int i = 0; i < BATCH_SIZE; i++) {
             predictor.predict(features);
         }
     }

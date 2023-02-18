@@ -2,11 +2,10 @@ package io.github.treetops.core.predictor;
 
 import io.github.treetops.core.model.TreeModel;
 import io.github.treetops.core.model.TreeNode;
-
 import java.util.Objects;
 
 /**
- * Meta data holder for Predictor
+ * Meta data holder for Predictor.
  *
  * @author chenzhou@apache.org
  * @date 2023/2/14
@@ -14,7 +13,7 @@ import java.util.Objects;
 public class MetaDataHolder {
 
     /**
-     * category bit threshold used in process of category node decision
+     * category bit threshold used in process of category node decision.
      */
     private long[][] catBitSet;
 
@@ -31,6 +30,15 @@ public class MetaDataHolder {
         }
     }
 
+    /**
+     * Refer to include/LightGBM/utils/common.h#FindInBitsets.
+     *
+     * @param index tree index
+     * @param begin begin
+     * @param n     length
+     * @param val   feature value
+     * @return is find bit
+     */
     protected boolean findCatBitset(int index, int begin, int n, double val) {
         int pos = (int) val;
         int i1 = pos / 32;

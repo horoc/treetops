@@ -5,14 +5,16 @@ import io.github.treetops.core.model.TreeModel;
 import io.github.treetops.core.model.TreeNode;
 
 /**
+ * Simple predictor implementation, follow the LightGBM cpp implementation.
+ *
  * @author chenzhou@apache.org
  * @date 2023/2/14
  */
 public class SimplePredictor extends MetaDataHolder implements Predictor {
 
-    private final TreeModel treeModel;
-
     private static final double K_ZERO_THRESHOLD = 1e-35f;
+
+    private final TreeModel treeModel;
 
     public SimplePredictor(TreeModel treeModel) {
         this.treeModel = treeModel;
@@ -28,7 +30,7 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
     }
 
     /**
-     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#Tree::Decision
+     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#Tree::Decision.
      * <p></p>
      *
      * @param treeNode tree node meta data
@@ -48,7 +50,7 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
     }
 
     /**
-     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#Tree::NumericalDecision
+     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#Tree::NumericalDecision.
      * <p></p>
      *
      * @param treeNode tree node meta data
@@ -63,8 +65,9 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
             feature = 0.0;
         }
 
-        if ((missingType == MissingType.Zero && isZero(feature)) ||
-            (missingType == MissingType.Nan && Double.isNaN(feature))) {
+        boolean isZeroMiss = missingType == MissingType.Zero && isZero(feature);
+        boolean isNanMiss = missingType == MissingType.Nan && Double.isNaN(feature);
+        if (isZeroMiss || isNanMiss) {
             if (treeNode.isDefaultLeftDecision()) {
                 return decision(treeNode.getLeftNode(), features);
             } else {
@@ -80,7 +83,7 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
     }
 
     /**
-     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#Tree::CategoricalDecision
+     * Refer to official library: microsoft/LightGBM/include/LightGBM/tree.h#Tree::CategoricalDecision.
      * <p></p>
      *
      * @param treeNode tree node meta data
@@ -105,6 +108,6 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
     }
 
     private boolean isZero(double val) {
-        return (val >= -K_ZERO_THRESHOLD && val <= K_ZERO_THRESHOLD);
+        return val >= -K_ZERO_THRESHOLD && val <= K_ZERO_THRESHOLD;
     }
 }

@@ -1,8 +1,7 @@
 package io.github.treetops.benchmark.common;
 
-import java.io.InputStream;
-
 import io.github.treetops.core.loader.AbstractLoader;
+import java.io.InputStream;
 
 /**
  * @author chenzhou@apache.org
@@ -11,7 +10,7 @@ import io.github.treetops.core.loader.AbstractLoader;
 public class ClassPathLoader extends AbstractLoader {
 
     @Override
-    protected InputStream loadStream(String resource) throws Exception {
+    protected InputStream loadStream(final String resource) throws Exception {
         return this.getClass().getResourceAsStream(resource);
     }
 }
