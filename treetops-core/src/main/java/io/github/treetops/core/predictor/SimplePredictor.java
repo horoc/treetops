@@ -91,7 +91,7 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
      * @return decision value of this node
      */
     private double categoricalDecision(TreeNode treeNode, double[] features) {
-        double feature = features[treeNode.getNodeIndex()];
+        double feature = features[treeNode.getSplitFeatures().get(treeNode.getNodeIndex())];
         if (Double.isNaN(feature)) {
             return decision(treeNode.getRightNode(), features);
         } else {
