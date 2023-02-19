@@ -8,21 +8,28 @@ Fast LightGBM tree model interference Java library which is based on ASM dynamic
 
 ## How Fast
 
-![](./docs/imgs/benchmark.png)
+<div align=center>
+<img src="./docs/imgs/benchmark.png" width = "80%" />
+</div>
+
+### Specification
 
 - Asm: Generated lightGBM predictor based on ASM framework.
 - Simple: Tree-based data structure predictor which follows the LightGBM cpp official implementation.
 
-Test Models:
+### Test Models
 
-> bc: model trained by breast cancer dataset (100 trees, binary)  
-> 
-> ch: model trained by california housing dataset (100 trees, regression) 
->
-> db: model trained by diabetes dataset (100 trees, regression) 
->
-> wn: model trained by wine dataset (300 trees, classification)
+- bc: model trained by breast cancer dataset (100 trees, binary)  
+- ch: model trained by california housing dataset (100 trees, regression) 
+- db: model trained by diabetes dataset (100 trees, regression) 
+- wn: model trained by wine dataset (300 trees, classification)
 
+### Environment
+
+- CPU: Intel Xeon Cooper Lake 3.4GHz, 4C
+- Memory: 8G
+- JDK: zulu JDK 8
+- Tools: Jmh, test config see `io.github.treetops.benchmark.common.AverageTimeBenchmarkTemplate.java`
 
 ## Quick Start
 
