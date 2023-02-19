@@ -1,5 +1,9 @@
 # Treetops
 
+![](https://img.shields.io/badge/License-MIT%20-green.svg?label=license)
+![](https://img.shields.io/github/stars/horoc/treetops?style=social)
+![](https://github.com/horoc/treetops/workflows/CI/badge.svg)
+ 
 Fast LightGBM tree model interference Java library which is based on ASM dynamic code generation framework.
 
 ## How Fast

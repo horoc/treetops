@@ -7,11 +7,11 @@ import io.github.treetops.core.predictor.Predictor;
  * @author chenzhou@apache.org
  * @date 2023/2/19
  */
-public class RegressionObjectiveDecorator extends AbstractOutputConvertor {
+public class CrossEntropyLambdaObjectiveDecorator extends AbstractOutputConvertor {
 
     @Override
     public double[] convert(double[] input) {
-        return new double[] {Math.exp(input[0])};
+        return new double[] {Math.log1p(Math.exp(-input[0]))};
     }
 
     @Override

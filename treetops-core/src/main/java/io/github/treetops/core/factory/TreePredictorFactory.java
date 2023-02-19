@@ -150,7 +150,7 @@ public class TreePredictorFactory {
             }
 
             // objective decorate
-            Predictor objectivePredictor = ObjectivePredictorFactory.decoratePredictorByObjectiveType(predictor, treeModel);
+            Predictor objectivePredictor = ObjectiveDecoratorFactory.decoratePredictorByObjectiveType(predictor, treeModel);
 
             // wrapper
             Predictor predictorWrapper = new PredictorWrapper(objectivePredictor, treeModel);
