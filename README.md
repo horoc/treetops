@@ -61,11 +61,11 @@ shrinkage=1
 
 The output decision value of this tree is based on every internal and leaf node's split strategy and value.
 
-According to the config, we can see there are three internal nodes and four leave nodes. If we store this tree in a tree-based data structure, in order to do the decision, we need to iterator from the tree root to the leaves. There would introduce lots of memory access and function calls during the prediction process in a large tree. This also affects the hit rate of the CPU instruction cache.
+According to the config, we can see there are three internal nodes and four leave nodes. If we store this tree in a tree-based data structure, we would need to iterate from the root to the leaves to make a decision. However, this process can result in lots of memory accesses and function calls. This also affects the hit rate of the CPU instruction cache.
 
-If we hardcode the tree structure, we can optimize these overhead.
+If we hardcode the tree structure, we could optimize these overhead.
 
-like:
+A generated tree decision function is like:
 
 ```
 private tree_0([D)D
@@ -105,6 +105,8 @@ the corresponding java code :
         }
     }
 ```
+
+we precompute the decision rules and use conditional statements to evaluate input features based on the tree config. This can be particularly advantageous for large trees, as dynamic traversal can become a significant bottleneck.
 
 ## Author
 
