@@ -29,7 +29,7 @@ Fast LightGBM tree model interference Java library which is based on ASM dynamic
 - CPU: Intel Xeon Cooper Lake 3.4GHz, 4C
 - Memory: 8G
 - JDK: zulu JDK 8
-- Tools: Jmh, test config see `io.github.treetops.benchmark.common.AverageTimeBenchmarkTemplate.java`
+- Tools: Jmh, test config see `AverageTimeBenchmarkTemplate.java`
 
 ## Quick Start
 
