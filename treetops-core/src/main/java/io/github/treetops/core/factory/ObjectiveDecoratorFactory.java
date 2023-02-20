@@ -70,4 +70,14 @@ public class ObjectiveDecoratorFactory {
     public static void registerNewConvertor(final String type, final Class<? extends AbstractOutputConvertor> clazz) {
         CONVERTORS.putIfAbsent(type, clazz);
     }
+
+    /**
+     * Check if objective type is supported.
+     *
+     * @param type type name
+     * @return is supported
+     */
+    public static boolean isValidObjectiveType(final String type) {
+        return CONVERTORS.containsKey(type);
+    }
 }

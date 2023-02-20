@@ -3,7 +3,7 @@
 ![](https://img.shields.io/badge/License-MIT%20-green.svg?label=license)
 ![](https://img.shields.io/github/stars/horoc/treetops?style=social)
 ![](https://github.com/horoc/treetops/workflows/CI/badge.svg)
- 
+
 Fast LightGBM tree model interference Java library which is based on ASM dynamic code generation framework.
 
 ## How Fast
@@ -70,9 +70,9 @@ The output decision value of this tree is based on every internal and leaf node'
 
 According to the config, we can see there are three internal nodes and four leave nodes. If we store this tree in a tree-based data structure, we would need to iterate from the root to the leaves to make a decision. However, this process can result in lots of memory accesses and function calls. This also affects the hit rate of the CPU instruction cache.
 
-If we hardcode the tree structure, we could optimize these overhead.
+If we hardcode the tree structure, we could optimize this overhead.
 
-A generated tree decision function is like:
+A generated tree decision function is like this:
 
 ```
 private tree_0([D)D

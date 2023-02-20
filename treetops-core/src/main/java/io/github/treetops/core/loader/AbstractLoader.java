@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.Validate;
 
 /**
  * @author chenzhou@apache.org
@@ -29,6 +30,7 @@ public abstract class AbstractLoader {
      * @return TreeModel instance
      */
     public TreeModel loadModel(final String resource) {
+        Validate.notBlank(resource, "model resource path must not be empty");
         List<String> lines;
         try (InputStream stream = loadStream(resource)) {
             lines = IOUtils.readLines(stream, StandardCharsets.UTF_8);

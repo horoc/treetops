@@ -1,5 +1,6 @@
 package io.github.treetops.core.parser;
 
+import io.github.treetops.core.factory.ObjectiveDecoratorFactory;
 import io.github.treetops.core.model.RawTreeBlock;
 import io.github.treetops.core.model.TreeModel;
 import io.github.treetops.core.model.TreeNode;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Parse String model info into TreeModel instance.
@@ -44,6 +46,8 @@ public class TreeModelParser {
      * @return tree model instance
      */
     public static TreeModel parseTreeModel(final List<String> rawLines) {
+        Validate.notNull(rawLines);
+
         TreeModel treeModel = new TreeModel();
         int curLineIndex = 0;
         while (curLineIndex < rawLines.size()) {
@@ -67,6 +71,7 @@ public class TreeModelParser {
             }
             curLineIndex++;
         }
+        checkTreeBlock(treeModel);
         return treeModel;
     }
 
@@ -201,7 +206,7 @@ public class TreeModelParser {
             }
             String[] sp = line.split("=");
             if (sp.length != 2) {
-                throw new RuntimeException("try to parse tree model failed, invalid content");
+                throw new RuntimeException(String.format("try to parse tree model failed, invalid key-value content %s", line));
             }
             rawDataMap.put(sp[0], sp[1]);
         }
@@ -254,7 +259,32 @@ public class TreeModelParser {
                                                Function<String, T> converter, Consumer<T> setter) {
         String rawValue = rawDataMap.get(key);
         if (StringUtils.isNoneBlank(rawValue)) {
-            setter.accept(converter.apply(rawValue));
+            try {
+                setter.accept(converter.apply(rawValue));
+            } catch (Throwable e) {
+                throw new RuntimeException(String.format("parsing tree model file error, "
+                    + "try to convert field key: , value: ", key, rawValue), e);
+            }
         }
+    }
+
+    private static void checkTreeBlock(final TreeModel treeModel) {
+        Validate.notNull(treeModel,
+            "parsing tree model failed, can not find any valid block");
+
+        Validate.notEmpty(treeModel.getTrees(),
+            "parsing tree model failed, can not find any valid block");
+
+        Validate.isTrue(treeModel.getNumClass() > 0,
+            "parsing tree model failed, invalid meta info, num class must be positive");
+
+        Validate.isTrue(treeModel.getMaxFeatureIndex() >= 0,
+            "parsing tree model failed, invalid meta info, max feature index can not be negative");
+
+        Validate.isTrue(treeModel.getNumberTreePerIteration() > 0,
+            "parsing tree model failed, invalid meta info, number tree per iteration must be positive");
+
+        Validate.isTrue(ObjectiveDecoratorFactory.isValidObjectiveType(treeModel.getObjectiveType()),
+            "parsing tree model failed, invalid meta info, objective type %s is not supported", treeModel.getObjectiveType());
     }
 }
