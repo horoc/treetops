@@ -33,9 +33,32 @@ Fast LightGBM tree model interference Java library which is based on ASM dynamic
 
 ## Quick Start
 
+### Dependencies
+
+Currently, we just publish it into the maven snapshot center, if you want to have a look,  you can pull the snapshot version to have a try.
+
+Add repositories:
+
+```
+repositories {
+		// ... ...
+		maven {
+        url 'https://s01.oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+```
+
+Add dependencies:
+
+```
+implementation 'io.github.horoc:treetops-core:1.0-SNAPSHOT'
+```
+
+### API
+
 ```java
-    Predictor predictor = TreePredictorFactory.newInstance("model_v0", modelFilePath);
-    predictor.predict(features);
+Predictor predictor = TreePredictorFactory.newInstance("model_v0", modelFilePath);
+predictor.predict(features);
 ```
 
 ## Core Idea
