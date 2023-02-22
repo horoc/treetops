@@ -91,6 +91,6 @@ https://s01.oss.sonatype.org/
 
 ## 5. Clean Up Your Modification
 
-1. **You should clean the content of the gradle.properties to avoid publishing your password to the GitHub repository. **
+1. **You should clean the content of the gradle.properties to avoid publishing your password to the GitHub repository.**
 2. **You should delete the gpg file which you add to the project**
 
