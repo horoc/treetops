@@ -4,7 +4,7 @@ plugins {
     id "me.champeau.jmh" version "0.6.8"
 }
 
-group 'io.github.horoc.treetops'
+group 'io.github.horoc'
 version '1.0-SNAPSHOT'
 
 allprojects {
