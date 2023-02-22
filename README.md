@@ -35,7 +35,9 @@ Fast LightGBM tree model interference Java library which is based on ASM dynamic
 
 ### Dependencies
 
-Currently, we just publish it into the maven snapshot center, if you want to have a look,  you can pull the snapshot version to have a try.
+Currently, we have published the snapshot version, we will publish the first release version after fully testing most of the cases. 
+
+But if you want to have a look,  you can pull the snapshot version to have a try.
 
 Add repositories:
 
