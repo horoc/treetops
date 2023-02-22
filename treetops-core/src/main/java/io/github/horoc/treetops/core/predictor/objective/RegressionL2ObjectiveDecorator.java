@@ -5,7 +5,7 @@ import io.github.horoc.treetops.core.predictor.Predictor;
 
 /**
  * @author chenzhou@apache.org
- * @date 2023/2/15
+ * created on 2023/2/15
  */
 public final class RegressionL2ObjectiveDecorator extends AbstractOutputConvertor {
 

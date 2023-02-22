@@ -5,7 +5,7 @@ import io.github.horoc.treetops.core.predictor.Predictor;
 
 /**
  * @author chenzhou@apache.org
- * @date 2023/2/19
+ * created on 2023/2/19
  */
 public class CrossEntropyLambdaObjectiveDecorator extends AbstractOutputConvertor {
 

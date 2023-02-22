@@ -5,7 +5,7 @@ import java.util.Random;
 
 /**
  * @author chenzhou@apache.org
- * @date 2023/2/17
+ * created on 2023/2/17
  */
 public class GeneratedPredictorBenchmark extends AverageTimeBenchmarkTemplate {
 

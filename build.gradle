@@ -4,13 +4,8 @@ plugins {
     id "me.champeau.jmh" version "0.6.8"
 }
 
-group 'io.github.horoc'
-version '1.0-SNAPSHOT'
-
 allprojects {
     apply plugin: 'java'
-    apply plugin: 'maven-publish'
-    apply plugin: 'signing'
     apply plugin: 'checkstyle'
     apply plugin: 'org.asciidoctor.jvm.convert'
     apply plugin: 'org.asciidoctor.jvm.gems'
@@ -44,6 +39,86 @@ allprojects {
 
     checkstyleTest
             .exclude('**/exclude/*.java')
+}
+
+project(":treetops-core") {
+    archivesBaseName = "treetops-core"
+
+    apply plugin: 'signing'
+    apply plugin: 'maven-publish'
+
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = 'treetops-core'
+                from components.java
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
+                pom {
+                    name = 'treetops'
+                    packaging = 'jar'
+                    description = 'Treetops, a fast LightGBM tree model interference Java library'
+
+                    licenses {
+                        license {
+                            name = 'MIT Licence'
+                            url = 'https://raw.githubusercontent.com/horoc/treetops/master/LICENSE'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'chenzhou'
+                            name = 'Chen Zhou'
+                            url = 'https://github.com/horoc'
+                        }
+                    }
+                    scm {
+                        connection = 'https://github.com/horoc/treetops.git'
+                        developerConnection = 'git@github.com:horoc/treetops.git'
+                        url = 'https://github.com/horoc/treetops'
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                name = "OSSRH"
+                if (project.version.toString().endsWith("-SNAPSHOT")) {
+                    url = "https://s01.oss.sonatype.org/content/repositories/snapshots"
+                } else {
+                    url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                }
+                credentials {
+                    username = project.ossrhUsername
+                    password = project.ossrhPassword
+                }
+            }
+        }
+    }
+
+    signing {
+        sign publishing.publications.mavenJava
+    }
 }
 
 test {

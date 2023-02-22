@@ -5,7 +5,7 @@ import io.github.horoc.treetops.core.predictor.Predictor;
 
 /**
  * @author chenzhou@apache.org
- * @date 2023/2/18
+ * created on 2023/2/18
  */
 public class MultiClassObjectiveDecorator extends AbstractOutputConvertor {
 

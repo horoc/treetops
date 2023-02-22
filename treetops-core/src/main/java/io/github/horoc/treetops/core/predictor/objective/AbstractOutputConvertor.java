@@ -5,10 +5,10 @@ import io.github.horoc.treetops.core.predictor.Predictor;
 
 /**
  * Objective convert function interface.
- * <P></P>
+ * <br>
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public abstract class AbstractOutputConvertor implements Predictor {
 

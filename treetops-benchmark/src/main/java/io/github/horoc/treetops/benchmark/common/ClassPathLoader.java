@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 /**
  * @author chenzhou@apache.org
- * @date 2023/2/18
+ * created on 2023/2/18
  */
 public class ClassPathLoader extends AbstractLoader {
 

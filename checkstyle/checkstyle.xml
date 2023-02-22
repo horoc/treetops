@@ -178,7 +178,6 @@
         </module>
         <module name="NestedTryDepth"/>
         <module name="NoClone"/>
-        <!--        <module name="NoFinalizer"/>-->
         <module name="SuperClone"/>
         <module name="SuperFinalize"/>
         <module name="OneStatementPerLine"/>
@@ -204,12 +203,9 @@
         <module name="RightCurly"/>
 
         <!-- Class Design -->
-<!--        <module name="FinalClass"/>-->
-        <!--<module name="HideUtilityClassConstructor"/>-->
         <module name="OneTopLevelClass"/>
         <module name="InterfaceIsType"/>
         <module name="InnerTypeLast"/>
-<!--        <module name="VisibilityModifier"/>-->
         <module name="MutableException"/>
         <module name="ThrowsCount"/>
 
@@ -218,8 +214,14 @@
         <module name="UpperEll"/>
         <module name="AvoidEscapedUnicodeCharacters"/>
         <module name="DescendantToken"/>
-<!--        <module name="FinalParameters"/>-->
-        <module name="Indentation"/>
+        <!--        <module name="FinalParameters"/>-->
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="braceAdjustment" value="2"/>
+            <property name="throwsIndent" value="4"/>
+            <property name="lineWrappingIndentation" value="4"/>
+            <property name="arrayInitIndent" value="2"/>
+        </module>
         <module name="OuterTypeFilename"/>
         <module name="TodoComment"/>
         <module name="TrailingComment"/>
@@ -228,10 +230,7 @@
         <module name="AtclauseOrder">
             <property name="tagOrder" value="@param, author@return, @throws, @deprecated"/>
         </module>
-<!--        <module name="NonEmptyAtclauseDescription"/>-->
-<!--        <module name="JavadocParagraph"/>-->
         <module name="JavadocStyle"/>
-        <module name="JavadocTagContinuationIndentation"/>
         <module name="SingleLineJavadoc"/>
         <module name="JavadocMethod">
             <property name="allowedAnnotations"

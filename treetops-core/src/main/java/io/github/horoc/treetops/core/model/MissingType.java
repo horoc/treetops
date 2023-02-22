@@ -2,7 +2,7 @@ package io.github.horoc.treetops.core.model;
 
 /**
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public enum MissingType {
     /**

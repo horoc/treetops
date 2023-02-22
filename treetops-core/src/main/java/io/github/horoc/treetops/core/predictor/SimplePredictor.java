@@ -8,7 +8,7 @@ import io.github.horoc.treetops.core.model.TreeNode;
  * Simple predictor implementation, follow the LightGBM cpp implementation.
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public class SimplePredictor extends MetaDataHolder implements Predictor {
 

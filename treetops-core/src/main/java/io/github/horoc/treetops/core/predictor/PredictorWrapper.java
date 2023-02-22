@@ -7,7 +7,7 @@ import java.util.Objects;
  * Predictor Wrapper, introduce preprocess/postprocess of prediction process.
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public final class PredictorWrapper implements Predictor {
 

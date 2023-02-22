@@ -14,10 +14,10 @@ import java.util.Map;
 
 /**
  * Predictor objective function decorate factory.
- * <p></p>
+ * <br>
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public class ObjectiveDecoratorFactory {
 

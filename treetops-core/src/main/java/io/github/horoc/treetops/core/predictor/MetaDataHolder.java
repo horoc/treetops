@@ -8,7 +8,7 @@ import java.util.Objects;
  * Meta data holder for Predictor.
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public class MetaDataHolder {
 

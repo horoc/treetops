@@ -8,10 +8,9 @@ import org.apache.commons.lang3.Validate;
 
 /**
  * File model loader.
- * <p></p>
- *
+ * <br>
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public final class FileTreeModelLoader extends AbstractLoader {
 

@@ -2,7 +2,7 @@ package io.github.horoc.treetops.core.predictor;
 
 /**
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public interface Predictor {
 
@@ -13,7 +13,7 @@ public interface Predictor {
 
     /**
      * Refer to official library api: microsoft/LightGBM/src/boosting/gbdt.h#GBDT::PredictRaw.
-     * <p></p>
+     * <br>
      *
      * @param features input feature, size of features should be equals to max_feature_idx
      * @return output value, size of output should be num_class
@@ -22,7 +22,7 @@ public interface Predictor {
 
     /**
      * Refer to official library api: microsoft/LightGBM/src/boosting/gbdt.h#GBDT::Predict.
-     * <p></p>
+     * <br>
      *
      * @param features input feature, size of features should be equals to max_feature_idx
      * @return output value, size of output should be num_class

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.Validate;
 
 /**
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public abstract class AbstractLoader {
 
@@ -19,7 +19,7 @@ public abstract class AbstractLoader {
      *
      * @param resource resource path
      * @return InputStream from resource
-     * @throws Exception
+     * @throws Exception exception while loading stream from resource
      */
     protected abstract InputStream loadStream(String resource) throws Exception;
 

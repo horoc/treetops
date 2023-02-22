@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
  * Binary objective function convertor.
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public final class BinaryObjectiveDecorator extends AbstractOutputConvertor {
 

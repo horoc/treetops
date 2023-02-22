@@ -15,10 +15,10 @@ import org.objectweb.asm.util.CheckClassAdapter;
 
 /**
  * Predictor class generator based on asm framework.
- * <p></p>
+ * <br>
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public final class PredictorClassGenerator extends ClassLoader implements Generator, Opcodes {
 
@@ -44,7 +44,7 @@ public final class PredictorClassGenerator extends ClassLoader implements Genera
     }
 
     /**
-     * We can not maintain a singleton instance of generator here, <br/>
+     * We can not maintain a singleton instance of generator here, <br>
      * since we want jvm to unload class which would be no longer used.
      *
      * @return predictor instance

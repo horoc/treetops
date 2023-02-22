@@ -6,10 +6,10 @@ import org.apache.commons.lang3.Validate;
 
 /**
  * Tree model loading factory.
- * <p></p>
+ * <br>
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public class FileTreeModelFactory {
 

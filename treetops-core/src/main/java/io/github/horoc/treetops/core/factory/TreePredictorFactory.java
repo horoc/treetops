@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
  * Core factory of tree predictor, user should only get predictor instance through this factory.
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public class TreePredictorFactory {
 
@@ -46,7 +46,7 @@ public class TreePredictorFactory {
     private static int asmGenerationTreeNumsThreshold = 300;
 
     /**
-     * Entry point for user custom model loader, default model loader is {@link FileTreeModelLoader} <br/>
+     * Entry point for user custom model loader, default model loader is {@link FileTreeModelLoader} <br>
      * User custom model loader should implement {@link AbstractLoader}.
      *
      * @param loader custom loader
@@ -56,7 +56,7 @@ public class TreePredictorFactory {
     }
 
     /**
-     * Entry point for user to custom tree nums threshold. <br/>
+     * Entry point for user to custom tree nums threshold. <br>
      * To be careful, the value should not be too large, since asm has a limitation of class size.
      * Can see the detail {@link org.objectweb.asm.ClassWriter#toByteArray()}.
      *
@@ -102,9 +102,9 @@ public class TreePredictorFactory {
     }
 
     /**
-     * Create predictor from resource: <br/>
-     * 1. load model data from resource path. <br/>
-     * 2. parse to {@link TreeModel} instance.  <br/>
+     * Create predictor from resource: <br>
+     * 1. load model data from resource path. <br>
+     * 2. parse to {@link TreeModel} instance.  <br>
      * 3. generate {@link Predictor} based on model detail.
      *
      * @param modelName        model name, should be distinct from exist Predictor, and must only contain character: [a-zA-z0-9_]

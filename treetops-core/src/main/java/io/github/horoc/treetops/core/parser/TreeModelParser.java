@@ -18,7 +18,7 @@ import org.apache.commons.lang3.Validate;
  * Parse String model info into TreeModel instance.
  *
  * @author chenzhou@apache.org
- * @date 2023/2/14
+ * created on 2023/2/14
  */
 public class TreeModelParser {
 
@@ -38,9 +38,9 @@ public class TreeModelParser {
     private static final String CONFIG_SEPARATOR = " ";
 
     /**
-     * Parse workflow: <br/>
-     * 1. iterator each line to find meta block header or tree block header <br/>
-     * 2. parse different block into tree model instance <br/>
+     * Parse workflow: <br>
+     * 1. iterator each line to find meta block header or tree block header <br>
+     * 2. parse different block into tree model instance <br>
      *
      * @param rawLines raw data
      * @return tree model instance
