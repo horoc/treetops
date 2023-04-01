@@ -58,7 +58,7 @@ public class SimplePredictor extends MetaDataHolder implements Predictor {
      * @return decision value of this node
      */
     private double numericalDecision(TreeNode treeNode, double[] features) {
-        MissingType missingType = MissingType.ofMask(treeNode.getDecisionType());
+        MissingType missingType = MissingType.ofMask((treeNode.getDecisionType() >> 2) & 3);
         double threshold = treeNode.getThreshold();
         double feature = features[treeNode.getSplitFeatures().get(treeNode.getNodeIndex())];
         if (Double.isNaN(feature) && missingType != MissingType.Nan) {

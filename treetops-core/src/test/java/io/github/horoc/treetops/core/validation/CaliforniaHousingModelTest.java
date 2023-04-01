@@ -37,4 +37,32 @@ public class CaliforniaHousingModelTest extends LoadModelTemplate {
             Assertions.fail(e);
         }
     }
+
+    @Test
+    public void testNanFeature() {
+        try {
+            Predictor predictor = loadModel("california_housing_model", false);
+            double[] features = getFeature();
+            features[0] = Double.NaN;
+            features[5] = Double.NaN;
+            double[] result = predictor.predict(features);
+            Assertions.assertEquals(1.5796328060168647D, result[0]);
+        } catch (Throwable e) {
+            Assertions.fail(e);
+        }
+    }
+
+    @Test
+    public void testNanFeatureByGeneratedClass() {
+        try {
+            Predictor predictor = loadModel("california_housing_model", true);
+            double[] features = getFeature();
+            features[0] = Double.NaN;
+            features[5] = Double.NaN;
+            double[] result = predictor.predict(features);
+            Assertions.assertEquals(1.5796328060168647D, result[0]);
+        } catch (Throwable e) {
+            Assertions.fail(e);
+        }
+    }
 }

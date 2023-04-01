@@ -42,6 +42,38 @@ public class WineModelTest extends LoadModelTemplate {
         }
     }
 
+    @Test
+    public void testNanFeature() {
+        try {
+            Predictor predictor = loadModel("wine_model", false);
+            double[] features = getFeature();
+            features[2] = Double.NaN;
+            features[7] = Double.NaN;
+            double[] result = predictor.predict(features);
+            assertDoubleEquals(0.9838801475136683D, result[0]);
+            assertDoubleEquals(0.009129569672519997D, result[1]);
+            assertDoubleEquals(0.006990282813811561D, result[2]);
+        } catch (Throwable e) {
+            Assertions.fail(e);
+        }
+    }
+
+    @Test
+    public void testNanFeatureByGeneratedClass() {
+        try {
+            Predictor predictor = loadModel("wine_model", true);
+            double[] features = getFeature();
+            features[2] = Double.NaN;
+            features[7] = Double.NaN;
+            double[] result = predictor.predict(features);
+            assertDoubleEquals(0.9838801475136683D, result[0]);
+            assertDoubleEquals(0.009129569672519997D, result[1]);
+            assertDoubleEquals(0.006990282813811561D, result[2]);
+        } catch (Throwable e) {
+            Assertions.fail(e);
+        }
+    }
+
     private void assertDoubleEquals(double expected, double actual) {
         Assertions.assertTrue(Math.abs(expected - actual) < 1e-35f);
     }

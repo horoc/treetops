@@ -39,4 +39,32 @@ public class BreastCancerModelTest extends LoadModelTemplate {
             Assertions.fail(e);
         }
     }
+
+    @Test
+    public void testNanFeature() {
+        try {
+            Predictor predictor = loadModel("breast_cancer_model", false);
+            double[] features = getFeature();
+            features[0] = Double.NaN;
+            features[27] = Double.NaN;
+            double[] result = predictor.predict(features);
+            Assertions.assertEquals(0.1716604128665585D, result[0]);
+        } catch (Throwable e) {
+            Assertions.fail(e);
+        }
+    }
+
+    @Test
+    public void testNanFeatureByGeneratedClass() {
+        try {
+            Predictor predictor = loadModel("breast_cancer_model", true);
+            double[] features = getFeature();
+            features[0] = Double.NaN;
+            features[27] = Double.NaN;
+            double[] result = predictor.predict(features);
+            Assertions.assertEquals(0.1716604128665585D, result[0]);
+        } catch (Throwable e) {
+            Assertions.fail(e);
+        }
+    }
 }

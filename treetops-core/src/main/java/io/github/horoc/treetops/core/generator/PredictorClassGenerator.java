@@ -171,16 +171,19 @@ public final class PredictorClassGenerator extends ClassLoader implements Genera
         methodVisitor.visitVarInsn(DSTORE, 2);
 
         // if missing_type != nan and feature is nan, set feature to zero
-        MissingType missingType = MissingType.ofMask(node.getDecisionType());
+        MissingType missingType = MissingType.ofMask((node.getDecisionType() >> 2) & 3);
         if (missingType != MissingType.Nan) {
             methodVisitor.visitVarInsn(DLOAD, 2);
             methodVisitor.visitVarInsn(DLOAD, 2);
+            methodVisitor.visitInsn(DCMPL);
             Label label = new Label();
-            methodVisitor.visitJumpInsn(IFNE, labels.get(node.getRightNode().getNodeIndex()));
-            methodVisitor.visitLabel(label);
+            // if feature is not nan, go to continue
+            methodVisitor.visitJumpInsn(IFEQ, label);
             // set feature to zero
             methodVisitor.visitInsn(DCONST_0);
             methodVisitor.visitVarInsn(DSTORE, 2);
+            // continue
+            methodVisitor.visitLabel(label);
         }
 
         // if missingType == zero and feature is zero

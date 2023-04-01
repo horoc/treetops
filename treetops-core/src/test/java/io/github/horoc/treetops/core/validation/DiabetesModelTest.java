@@ -37,4 +37,32 @@ public class DiabetesModelTest extends LoadModelTemplate {
             Assertions.fail(e);
         }
     }
+
+    @Test
+    public void testNanFeature() {
+        try {
+            Predictor predictor = loadModel("diabetes_model", false);
+            double[] features = getFeature();
+            features[1] = Double.NaN;
+            features[3] = Double.NaN;
+            double[] result = predictor.predict(features);
+            Assertions.assertEquals(223.98172555247731D, result[0]);
+        } catch (Throwable e) {
+            Assertions.fail(e);
+        }
+    }
+
+    @Test
+    public void testNanFeatureByGeneratedClass() {
+        try {
+            Predictor predictor = loadModel("diabetes_model", true);
+            double[] features = getFeature();
+            features[1] = Double.NaN;
+            features[3] = Double.NaN;
+            double[] result = predictor.predict(features);
+            Assertions.assertEquals(223.98172555247731D, result[0]);
+        } catch (Throwable e) {
+            Assertions.fail(e);
+        }
+    }
 }
