@@ -1,5 +1,4 @@
-# <div align="center"><a href="https://github.com/horoc/treetops">Treetops</a></div>
-
+# 🍃 Treetops
 
 ![](https://img.shields.io/badge/License-MIT%20-green.svg?label=license)
 [![Continuous Integration](https://github.com/horoc/treetops/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/horoc/treetops/actions/workflows/gradle.yml)
@@ -7,7 +6,11 @@
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-green?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://github.com/horoc/treetops"><img src="https://img.shields.io/github/repo-size/horoc/treetops" alt="GitHub repo size"></a>
 
-> Fast LightGBM tree model interference Java library which is based on ASM dynamic code generation framework.
+> 🚀 Fast LightGBM tree model interference Java library which is based on ASM dynamic code generation framework.
+>
+> 🐒 Easy to integrate with Java project, no need to install extra libs.
+>
+> 💯 Fully implemented by Java, easy to customize your own functionality.
 
 ----------------------------------------
 
