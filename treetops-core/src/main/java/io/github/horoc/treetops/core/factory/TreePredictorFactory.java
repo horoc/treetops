@@ -14,6 +14,8 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -22,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
  * @author chenzhou@apache.org
  * created on 2023/2/14
  */
+@ThreadSafe
+@ParametersAreNonnullByDefault
 public class TreePredictorFactory {
 
     /**

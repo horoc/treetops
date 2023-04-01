@@ -2,6 +2,9 @@ package io.github.horoc.treetops.core.factory;
 
 import io.github.horoc.treetops.core.loader.FileTreeModelLoader;
 import io.github.horoc.treetops.core.model.TreeModel;
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -11,6 +14,9 @@ import org.apache.commons.lang3.Validate;
  * @author chenzhou@apache.org
  * created on 2023/2/14
  */
+@Immutable
+@ThreadSafe
+@ParametersAreNonnullByDefault
 public class FileTreeModelFactory {
 
     /**

@@ -11,6 +11,8 @@ import io.github.horoc.treetops.core.predictor.objective.RegressionL2ObjectiveDe
 import io.github.horoc.treetops.core.predictor.objective.RegressionObjectiveDecorator;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Predictor objective function decorate factory.
@@ -19,6 +21,8 @@ import java.util.Map;
  * @author chenzhou@apache.org
  * created on 2023/2/14
  */
+@ThreadSafe
+@ParametersAreNonnullByDefault
 public class ObjectiveDecoratorFactory {
 
     private static final Map<String, Class<? extends AbstractOutputConvertor>> CONVERTORS = new HashMap<>();
