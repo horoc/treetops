@@ -6,7 +6,7 @@
 <a href="https://openjdk.java.net/"><img src="https://img.shields.io/badge/Java-8+-green?logo=openjdk&logoColor=white" alt="Java support"></a>
 <a href="https://github.com/horoc/treetops"><img src="https://img.shields.io/github/repo-size/horoc/treetops" alt="GitHub repo size"></a>
 
-> 🚀 Fast LightGBM tree model interference library which is based on ASM dynamic code generation framework.
+> 🚀 Fast LightGBM tree model interference lib which is based on ASM dynamic code generation framework.
 >
 > 🐒 Easy to integrate with Java project, no need to install extra libs.
 >
