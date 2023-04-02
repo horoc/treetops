@@ -46,6 +46,6 @@ public class MetaDataHolder {
             return false;
         }
         int i2 = pos % 32;
-        return ((catBitSet[index][i1 + begin] >> i2) & 1) > 0;
+        return ((catBitSet[index][i1 + begin] >> i2) & 1) != 0;
     }
 }

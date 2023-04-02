@@ -18,6 +18,6 @@ public abstract class LoadModelTemplate {
     protected Predictor loadModel(String resource, boolean isGenerated) {
         ClassLoader classLoader = getClass().getClassLoader();
         String path = classLoader.getResource(resource + ".txt").getPath();
-        return TreePredictorFactory.newInstance(resource, path, isGenerated);
+        return TreePredictorFactory.newInstance(resource, path, "./generated/", isGenerated);
     }
 }
