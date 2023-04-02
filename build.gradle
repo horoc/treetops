@@ -80,6 +80,7 @@ project(":treetops-core") {
                     name = 'treetops'
                     packaging = 'jar'
                     description = 'Treetops, a fast LightGBM tree model interference Java library'
+                    url = 'https://github.com/horoc/treetops'
 
                     licenses {
                         license {
