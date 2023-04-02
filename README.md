@@ -43,31 +43,38 @@
 
 ### Dependencies
 
-Currently, we have published the snapshot version, we will publish the first release version after fully testing most of the cases. 
-
-But if you want to have a look,  you can pull the snapshot version to have a try.
-
-Add repositories:
-
-```
-repositories {
-		// ... ...
-  maven {
-    url 'https://s01.oss.sonatype.org/content/repositories/snapshots'
-  }
-}
-```
+Currently, we have published the `0.1.0` version. 
 
 Add dependencies:
 
 ```
-implementation 'io.github.horoc:treetops-core:1.0-SNAPSHOT'
+implementation 'io.github.horoc:treetops-core:0.1.0'
 ```
+
+### Model
+
+You can train your own model or just use the test model files for testing. 
+
+> Test model path: `treetops-core/src/test/resources`
 
 ### API
 
 ```java
-Predictor predictor = TreePredictorFactory.newInstance("model_v0", modelFilePath);
+// model name must only contain character: [a-zA-z0-9_]
+Predictor predictor = TreePredictorFactory.newInstance("your_model_name_v0", filePathOfYourModel);
+predictor.predict(features);
+```
+
+If you want to save the generated class file and have a look, you can specify the save path.
+
+```java
+Predictor predictor = TreePredictorFactory.newInstance("your_model_name_v0", filePathOfYourModel, pathToSaveYourClass);
+predictor.predict(features);
+```
+
+If you want to compare with the simple predictor (disable genernation), you can create predictor by:
+```java
+Predictor predictor = TreePredictorFactory.newInstance("your_model_name_v0", "", false);
 predictor.predict(features);
 ```
 
