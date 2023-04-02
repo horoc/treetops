@@ -66,6 +66,8 @@ project(":treetops-core") {
             mavenJava(MavenPublication) {
                 artifactId = 'treetops-core'
                 from components.java
+                artifact sourcesJar
+                artifact javadocJar
                 versionMapping {
                     usage('java-api') {
                         fromResolutionOf('runtimeClasspath')
